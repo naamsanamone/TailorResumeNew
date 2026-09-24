@@ -110,12 +110,12 @@ export const ResumeLayout = ({ pauseFitToWidth = false }: { pauseFitToWidth?: bo
   }, [setZoom, pauseFitToWidth]);
 
   return (
-    <div ref={fitContainerRef} className="mx-5 print:mx-0 mb-2 print:mb-0">
+    <div ref={fitContainerRef} className="mx-5 print:mx-0 mb-2 print:mb-0 print:overflow-visible print:h-auto">
       <div
         style={{ transform: `scale(${zoom})` }}
-        className="resume-print-scale-wrap origin-top transition-all duration-300 ease-linear"
+        className="resume-print-scale-wrap origin-top transition-all duration-300 ease-linear print:overflow-visible print:h-auto"
       >
-        <div className="w-[210mm] min-h-[296mm] bg-white my-0 mx-auto">
+        <div className="w-[210mm] min-h-[296mm] bg-white my-0 mx-auto print:min-h-0 print:h-auto print:overflow-visible shadow-md print:shadow-none">
           <StateContext.Provider value={resumeData}>
             <ThemeProvider theme={selectedTheme}>
               <ResumeSectionLayoutShell templateId={templateId} resumeData={resumeData}>

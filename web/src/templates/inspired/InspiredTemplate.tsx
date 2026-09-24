@@ -63,7 +63,7 @@ export default function InspiredTemplate() {
   };
 
   return (
-    <div style={{ ...pageStyle(resumePalette), position: 'relative', overflow: 'hidden' }}>
+    <div style={{ ...pageStyle(resumePalette), position: 'relative' }}>
       <Hero basics={basics} p={resumePalette} />
       <div
         style={{

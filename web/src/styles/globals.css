@@ -52,6 +52,17 @@ body {
 }
 
 @media print {
+  html,
+  body,
+  #__next,
+  main {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+
   body *,
   *::before,
   *::after {
@@ -71,10 +82,37 @@ body {
   /* Inline preview zoom (transform: scale) must not carry into print — inline styles beat most utilities */
   .resume-print-scale-wrap {
     transform: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Ensure all scroll containers become visible and unconstrained */
+  .overflow-auto,
+  .overflow-hidden,
+  .overflow-y-auto {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Page break rules for clean multi-page resumes */
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  li {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Prevent section blocks from breaking awkwardly */
+  .sortable-template-section {
+    break-inside: auto;
   }
 }
 
 @page {
-  size: A4 !important;
+  size: A4 portrait;
   margin: 0 !important;
 }

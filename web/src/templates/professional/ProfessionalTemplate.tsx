@@ -21,12 +21,13 @@ import styled from '@emotion/styled';
 
 const ResumeContainer = styled.div`
   display: flex;
-  height: 100%;
+  min-height: 100%;
   padding: 40px 25px;
   column-gap: 10px;
 
   @media print {
     border: none;
+    height: auto;
   }
 `;
 
@@ -35,7 +36,11 @@ const LeftSection = styled.div`
   flex-direction: column;
   flex-basis: 66%;
   row-gap: 20px;
-  height: 100%;
+  min-height: 100%;
+
+  @media print {
+    height: auto;
+  }
 `;
 
 const RightSection = styled.div`
@@ -43,8 +48,12 @@ const RightSection = styled.div`
   flex-direction: column;
   flex-basis: 34%;
   row-gap: 20px;
-  height: 100%;
+  min-height: 100%;
   font-size: 12px;
+
+  @media print {
+    height: auto;
+  }
 `;
 
 export default function ProfessionalTemplate() {
