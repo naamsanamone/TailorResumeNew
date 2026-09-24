@@ -14,6 +14,7 @@ import { Header } from './components/Header';
 import { Skills } from './components/Skills';
 import { Summary } from './components/Summary';
 import { Work } from './components/Work';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 
 export default function ClassicTemplate() {
   const data = useContext(StateContext);
@@ -40,6 +41,14 @@ export default function ClassicTemplate() {
             p={resumePalette}
           />
         );
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }

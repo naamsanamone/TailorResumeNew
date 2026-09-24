@@ -8,6 +8,7 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette } from '@/templates/common/resumePalette';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 
 import { Education } from './components/Education';
 import { Frameworks } from './components/Frameworks';
@@ -32,6 +33,14 @@ export default function TechnicalTemplate() {
         return <Work work={data.work} p={resumePalette} />;
       case 'projects':
         return <Projects html={data.activities?.involvements} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }
@@ -52,6 +61,14 @@ export default function TechnicalTemplate() {
         return <Stack items={data.skills.tools.concat(data.skills.databases)} p={resumePalette} />;
       case 'education':
         return <Education education={data.education} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }

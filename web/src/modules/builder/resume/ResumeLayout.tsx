@@ -115,7 +115,7 @@ export const ResumeLayout = ({ pauseFitToWidth = false }: { pauseFitToWidth?: bo
         style={{ transform: `scale(${zoom})` }}
         className="resume-print-scale-wrap origin-top transition-all duration-300 ease-linear"
       >
-        <div className="w-[210mm] h-[296mm] bg-white my-0 mx-auto">
+        <div className="w-[210mm] min-h-[296mm] bg-white my-0 mx-auto">
           <StateContext.Provider value={resumeData}>
             <ThemeProvider theme={selectedTheme}>
               <ResumeSectionLayoutShell templateId={templateId} resumeData={resumeData}>

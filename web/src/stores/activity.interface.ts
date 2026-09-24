@@ -1,6 +1,7 @@
 export interface IActivity {
   involvements: string;
   achievements: string;
+  achievementsHtml: string;
 }
 
 export interface IActivityStore {
@@ -9,4 +10,5 @@ export interface IActivityStore {
   get: () => void;
   updateInvolvements: (involvements: string) => void;
   updateAchievements: (achievements: string) => void;
+  updateAchievementsHtml: (achievementsHtml: string) => void;
 }

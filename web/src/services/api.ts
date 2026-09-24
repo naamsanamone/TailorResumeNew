@@ -7,7 +7,7 @@ const API_BASE = 'http://localhost:8000/api';
 
 /* ─────────── Shared Types ─────────── */
 
-interface ResumeSection {
+export interface ResumeSection {
   name: string;
   type: string;
   fullName?: string;
@@ -17,6 +17,7 @@ interface ResumeSection {
   linkedin?: string;
   github?: string;
   portfolio?: string;
+  url?: string;
   headline?: string;
   text?: string;
   categories?: Record<string, string>;
@@ -201,6 +202,21 @@ export async function scoreResume(
     resume_content: sections,
     job_description: jobDescription,
   });
+}
+
+/** Parse an uploaded resume file (PDF/DOCX) into structured sections */
+export async function parseResumeFile(file: File): Promise<ResumeSection[]> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${API_BASE}/parse/resume`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || `API error ${res.status}`);
+  }
+  return res.json();
 }
 
 /** Health check */

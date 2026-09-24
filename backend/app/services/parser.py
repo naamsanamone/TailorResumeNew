@@ -15,18 +15,50 @@ SECTION_PATTERNS = {
     "education": r"(?i)^(education|academic|qualifications|degrees)",
     "skills": r"(?i)^(skills|technical\s+skills|core\s+competencies|technologies|proficiencies|areas\s+of\s+expertise)",
     "projects": r"(?i)^(projects|personal\s+projects|key\s+projects|notable\s+projects)",
-    "list": r"(?i)^(certifications?|awards?|honors?|publications?|languages?|volunteer|interests|activities|affiliations|licenses?)",
+    "list": r"(?i)^(certifications?|awards?|achievements?|honors?|publications?|languages?|volunteer|interests|activities|affiliations|licenses?)",
 }
 
 
 async def parse_resume_pdf(file_bytes: bytes) -> str:
-    """Extract text from PDF bytes using PyMuPDF."""
+    """Extract text from PDF bytes using PyMuPDF with spatial block sorting for 2-column layouts."""
     text = ""
     try:
         pdf_document = pymupdf.open(stream=file_bytes, filetype="pdf")
         for page_num in range(pdf_document.page_count):
             page = pdf_document.load_page(page_num)
-            text += page.get_text() + "\n\n"
+            # Use "blocks" to get text grouped with bounding boxes (x0, y0, x1, y1, text, block_no, type)
+            blocks = page.get_text("blocks")
+            # Filter text blocks only (type 0), ignore images (type 1)
+            text_blocks = [b for b in blocks if b[6] == 0]
+
+            if not text_blocks:
+                text += page.get_text() + "\n\n"
+                continue
+
+            # Detect if this is a 2-column layout
+            page_width = page.rect.width
+            mid_x = page_width / 2
+            left_blocks = [b for b in text_blocks if b[2] <= mid_x + 20]  # x1 <= midpoint
+            right_blocks = [b for b in text_blocks if b[0] >= mid_x - 20]  # x0 >= midpoint
+
+            # If roughly equal blocks on each side, treat as 2-column
+            if left_blocks and right_blocks and len(left_blocks) > 2 and len(right_blocks) > 2:
+                # Sort each column by y-position (top to bottom)
+                left_blocks.sort(key=lambda b: b[1])
+                right_blocks.sort(key=lambda b: b[1])
+                # Process left column first, then right
+                for b in left_blocks:
+                    text += b[4].strip() + "\n"
+                text += "\n"
+                for b in right_blocks:
+                    text += b[4].strip() + "\n"
+            else:
+                # Single column: sort by y-position
+                text_blocks.sort(key=lambda b: (b[1], b[0]))
+                for b in text_blocks:
+                    text += b[4].strip() + "\n"
+
+            text += "\n"
         pdf_document.close()
     except Exception as e:
         logger.error(f"Error parsing PDF: {str(e)}")
@@ -350,4 +382,58 @@ async def parse_resume_file(filename: str, file_bytes: bytes) -> List[Dict[str, 
     logger.info(f"Extracted {len(raw_text)} chars from {filename}")
 
     # Try LLM first, fallback to rule-based
-    return await structure_resume_llm(raw_text)
+    sections = await structure_resume_llm(raw_text)
+
+    # Always ensure header has LinkedIn/GitHub/portfolio URLs extracted from raw text
+    _enrich_header_urls(sections, raw_text)
+
+    return sections
+
+
+def _enrich_header_urls(sections: List[Dict[str, Any]], raw_text: str) -> None:
+    """Ensure the header section contains LinkedIn, GitHub, and portfolio URLs extracted from raw text."""
+    linkedin_re = re.compile(r"(?:https?://)?(?:www\.)?linkedin\.com/in/[\w-]+/?", re.I)
+    github_re = re.compile(r"(?:https?://)?(?:www\.)?github\.com/[\w-]+/?", re.I)
+    portfolio_re = re.compile(r"(?:https?://)?(?:www\.)?leetcode\.com/[\w-]+/?", re.I)
+    url_re = re.compile(r"https?://[^\s,|]+", re.I)
+
+    linkedin_match = linkedin_re.search(raw_text)
+    github_match = github_re.search(raw_text)
+    portfolio_match = portfolio_re.search(raw_text)
+
+    # Find header section
+    header = None
+    for sec in sections:
+        if sec.get("type") == "header":
+            header = sec
+            break
+
+    if not header:
+        return
+
+    if linkedin_match and not header.get("linkedin"):
+        url = linkedin_match.group()
+        if not url.startswith("http"):
+            url = "https://" + url
+        header["linkedin"] = url
+
+    if github_match and not header.get("github"):
+        url = github_match.group()
+        if not url.startswith("http"):
+            url = "https://" + url
+        header["github"] = url
+
+    if portfolio_match and not header.get("portfolio"):
+        url = portfolio_match.group()
+        if not url.startswith("http"):
+            url = "https://" + url
+        header["portfolio"] = url
+
+    # Also try to find any other URLs that could be portfolio
+    if not header.get("portfolio"):
+        for url_match in url_re.finditer(raw_text):
+            url = url_match.group().rstrip("/.,;)")
+            if "linkedin.com" not in url and "github.com" not in url and "mailto:" not in url:
+                header["portfolio"] = url
+                break
+

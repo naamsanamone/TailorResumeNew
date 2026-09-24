@@ -9,8 +9,12 @@ import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette } from '@/templates/common/resumePalette';
 import type { ResumePalette } from '@/templates/common/resumePalette';
 import type { IWorkIntrf, IEducation, IAwards, IItem } from '@/stores/index.interface';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 
-const Header = ({ basics, p }: { basics: any; p: ResumePalette }) => (
+const Header = ({ basics, p }: { basics: any; p: ResumePalette }) => {
+  const linkedin = basics.profiles?.find((pr: any) => pr.network.toLowerCase() === 'linkedin');
+  const github = basics.profiles?.find((pr: any) => pr.network.toLowerCase() === 'github');
+  return (
   <div style={{ marginBottom: '14px', paddingBottom: '10px', borderBottom: `2px solid ${p.primary}` }}>
     <h1 style={{ fontSize: '22px', fontWeight: 700, color: p.text, margin: 0, fontFamily: p.headingFont }}>{basics.name}</h1>
     {basics.label && <div style={{ fontSize: '12px', color: p.primary, fontWeight: 500, marginTop: '2px' }}>{basics.label}</div>}
@@ -19,9 +23,12 @@ const Header = ({ basics, p }: { basics: any; p: ResumePalette }) => (
       {basics.email && <><span>|</span><span>{basics.email}</span></>}
       {basics.location?.city && <><span>|</span><span>{basics.location.city}</span></>}
       {basics.url && <><span>|</span><span>{basics.url}</span></>}
+      {linkedin && <><span>|</span><a href={linkedin.url} style={{ color: p.primary, textDecoration: 'none' }}>LinkedIn</a></>}
+      {github && <><span>|</span><a href={github.url} style={{ color: p.primary, textDecoration: 'none' }}>GitHub</a></>}
     </div>
   </div>
-);
+  );
+};
 
 const Heading = ({ title, p }: { title: string; p: ResumePalette }) => (
   <h2 style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: p.text, margin: '14px 0 6px', paddingBottom: '3px', borderBottom: `2px solid ${p.primary}`, fontFamily: p.headingFont }}>{title}</h2>
@@ -125,7 +132,10 @@ export default function ResumaveTemplate() {
       case 'work': return <Work work={data.work} p={p} />;
       case 'education': return <Education education={data.education} p={p} />;
       case 'skills': return <Skills languages={data.skills.languages} frameworks={data.skills.frameworks} technologies={data.skills.technologies} tools={data.skills.tools} databases={data.skills.databases} p={p} />;
-      case 'awards': return <Awards awards={data.awards} p={p} />;
+      case 'awards': return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={p} />;
+      case 'projects': return <ProjectsSection involvements={data.activities.involvements} p={p} />;
+      case 'certifications': return <CertificationsSection achievements={data.activities.achievements} p={p} />;
+      case 'volunteer_exp': return <VolunteerSection volunteer={data.volunteer} p={p} />;
       default: return null;
     }
   };

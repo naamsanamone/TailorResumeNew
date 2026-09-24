@@ -17,6 +17,7 @@ import { useEducations } from '@/stores/education';
 import { useLanguages, useFrameworks, useTechnologies, useTools, useDatabases } from '@/stores/skills';
 import { useAwards } from '@/stores/awards';
 import { useVoluteeringStore } from '@/stores/volunteering';
+import { useActivity } from '@/stores/activity';
 
 type Step = 'input' | 'analysis';
 
@@ -78,7 +79,8 @@ function buildSections() {
     eduState as any,
     { languages: langState, frameworks: fwState, technologies: techState, tools: toolState, databases: dbState },
     useAwards.getState().awards as any,
-    useVoluteeringStore.getState().volunteeredExps || []
+    useVoluteeringStore.getState().volunteeredExps || [],
+    useActivity.getState().get() as any
   );
 }
 

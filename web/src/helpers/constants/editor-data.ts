@@ -1,8 +1,9 @@
-import ActivitiesLayout from '@/modules/builder/editor/modules/activities/ActivitiesLayout';
-import AwardsLayout from '@/modules/builder/editor/modules/awards/AwardsLayout';
+import AchievementsLayout from '@/modules/builder/editor/modules/achievements/AchievementsLayout';
 import BasicLayout from '@/modules/builder/editor/modules/basic/BasicLayout';
+import CertificationsLayout from '@/modules/builder/editor/modules/certifications/CertificationsLayout';
 import EducationLayout from '@/modules/builder/editor/modules/education/EducationLayout';
 import ExperienceLayout from '@/modules/builder/editor/modules/experience/ExperienceLayout';
+import ProjectsLayout from '@/modules/builder/editor/modules/projects/ProjectsLayout';
 import { ReactNode } from 'react';
 import SkillsLayout from '@/modules/builder/editor/modules/skills/SkillsLayout';
 import TailorLayout from '@/modules/builder/editor/modules/tailor/TailorLayout';
@@ -19,7 +20,8 @@ export const headers: {
   },
   education: { title: 'Education', component: EducationLayout },
   experience: { title: 'Experience', component: ExperienceLayout },
-  activities: { title: 'Activities', component: ActivitiesLayout },
+  projects: { title: 'Projects', component: ProjectsLayout },
+  certifications: { title: 'Certifications', component: CertificationsLayout },
+  achievements: { title: 'Achievements', component: AchievementsLayout },
   volunteering: { title: 'Volunteering', component: VolunteeringLayout },
-  awards: { title: 'Awards', component: AwardsLayout },
 };

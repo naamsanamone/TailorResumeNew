@@ -2,6 +2,8 @@ import type { ResumePalette } from '@/templates/common/resumePalette';
 
 const serif = "'Georgia', serif";
 
+type Profile = { network: string; username?: string; url: string };
+
 type Basics = {
   name: string;
   label: string;
@@ -9,9 +11,22 @@ type Basics = {
   phone?: string;
   url?: string;
   location?: { city?: string };
+  profiles?: Profile[];
 };
 
 export function Header({ basics, p }: { basics: Basics; p: ResumePalette }) {
+  const linkedin = basics.profiles?.find((pr) => pr.network.toLowerCase() === 'linkedin');
+  const github = basics.profiles?.find((pr) => pr.network.toLowerCase() === 'github');
+
+  const contactItems = [
+    basics.email,
+    basics.phone,
+    basics.location?.city,
+    basics.url,
+    linkedin ? linkedin.url : null,
+    github ? github.url : null,
+  ].filter(Boolean);
+
   return (
     <div
       style={{
@@ -33,10 +48,9 @@ export function Header({ basics, p }: { basics: Basics; p: ResumePalette }) {
         {basics.label}
       </div>
       <div style={{ fontSize: 10.5, color: p.muted, marginTop: 10 }}>
-        {[basics.email, basics.phone, basics.location?.city, basics.url]
-          .filter(Boolean)
-          .join(' · ')}
+        {contactItems.join(' · ')}
       </div>
     </div>
   );
 }
+

@@ -1,6 +1,8 @@
 PARSE_RESUME_PROMPT = """
 You are an expert resume parser. Given the raw text extracted from a resume document, convert it into a structured JSON format.
 The output MUST strictly conform to the provided JSON schema.
+IMPORTANT: Extract ALL sections present in the resume. If a section is not found, omit it from the output.
+Look for certifications mentioned anywhere in the resume (including in the summary or experience bullets) and extract them.
 
 Raw Resume Text:
 {raw_text}
@@ -14,9 +16,9 @@ JSON Schema structure expected for 'sections':
     "email": "string",
     "phone": "string",
     "location": "string",
-    "linkedin": "string",
-    "github": "string",
-    "portfolio": "string"
+    "linkedin": "full LinkedIn URL string",
+    "github": "full GitHub URL string",
+    "portfolio": "any other URL/website string"
   }},
   {{
     "name": "Summary",
@@ -52,10 +54,48 @@ JSON Schema structure expected for 'sections':
     "name": "Skills",
     "type": "skills",
     "categories": {{
-      "Category Name": "skill1, skill2, skill3"
+      "Languages": "Java, Python, TypeScript",
+      "Frameworks": "Spring Boot, React, Angular",
+      "Databases": "PostgreSQL, MongoDB",
+      "Tools": "Docker, Jenkins, Git",
+      "Technologies": "Microservices, REST APIs, AWS"
     }}
+  }},
+  {{
+    "name": "Projects",
+    "type": "projects",
+    "entries": [
+      {{
+        "title": "string",
+        "company": "string or empty",
+        "duration": "string or empty",
+        "bullets": ["string"]
+      }}
+    ]
+  }},
+  {{
+    "name": "Certifications",
+    "type": "list",
+    "items": ["certification name 1", "certification name 2"]
+  }},
+  {{
+    "name": "Awards",
+    "type": "list",
+    "items": ["award 1", "award 2"]
+  }},
+  {{
+    "name": "Volunteer",
+    "type": "list",
+    "items": ["volunteer experience 1"]
   }}
 ]
+
+IMPORTANT extraction rules:
+1. For Skills: Categorize into Languages, Frameworks, Databases, Tools, and Technologies.
+2. For Certifications: Extract ALL certifications mentioned anywhere, even if embedded in the summary or experience text. Look for keywords like "Certified", "Certificate", "Certification", "Licensed", "Accredited".
+3. For LinkedIn/GitHub: Extract the FULL URL including https://.
+4. For Projects: If no separate Projects section exists but experience bullets mention specific projects, do NOT create a projects section.
+5. Only include sections that have actual content in the resume.
 
 Respond ONLY with valid JSON. Example: {{"sections": [...]}}
 """

@@ -32,4 +32,6 @@ export const SECTION_IDS = {
   stack: 'stack',
   skillsMerged: 'skills_merged',
   involvements: 'involvements',
+  certifications: 'certifications',
+  volunteerExp: 'volunteer_exp',
 } as const;

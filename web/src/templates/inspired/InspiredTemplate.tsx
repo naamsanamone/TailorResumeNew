@@ -8,6 +8,7 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette, withAlpha } from '@/templates/common/resumePalette';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 
 import { Education } from './components/Education';
 import { Hero } from './components/Hero';
@@ -27,6 +28,14 @@ export default function InspiredTemplate() {
         return <Work work={data.work} p={resumePalette} />;
       case 'education':
         return <Education education={data.education} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }
@@ -40,6 +49,14 @@ export default function InspiredTemplate() {
         return (
           <Skills items={data.skills.languages.concat(data.skills.frameworks)} p={resumePalette} />
         );
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }

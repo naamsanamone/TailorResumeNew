@@ -8,9 +8,9 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette, withAlpha } from '@/templates/common/resumePalette';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 import { SECTION_IDS } from '@/templates/registry/sectionIds';
 
-import { Awards } from './components/Awards';
 import { Education } from './components/Education';
 import { Header } from './components/Header';
 import { Involvements } from './components/Involvements';
@@ -32,7 +32,14 @@ export default function StraightforwardTemplate() {
       case SECTION_IDS.skillsMerged:
         return <Skills items={skills} p={resumePalette} />;
       case SECTION_IDS.awards:
-        return <Awards awards={data.awards} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }
@@ -46,6 +53,14 @@ export default function StraightforwardTemplate() {
         return <Work work={data.work} p={resumePalette} />;
       case SECTION_IDS.involvements:
         return <Involvements html={data.activities?.involvements} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }

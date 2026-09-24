@@ -53,7 +53,8 @@ export function zustandToSections(
   education: IEducation[],
   skills: { languages: IItem[]; frameworks: IItem[]; technologies: IItem[]; tools: IItem[]; databases: IItem[] },
   awards: IAwards[],
-  volunteer: IVolunteer[]
+  volunteer: IVolunteer[],
+  activities?: { involvements: string; achievements: string }
 ): ResumeSection[] {
   const sections: ResumeSection[] = [];
 
@@ -134,6 +135,30 @@ export function zustandToSections(
       type: 'skills',
       categories: skillCategories,
     });
+  }
+
+  // Projects (from activities.involvements)
+  if (activities?.involvements) {
+    const projectBullets = extractBulletsFromHtml(activities.involvements);
+    if (projectBullets.length > 0) {
+      sections.push({
+        name: 'Projects',
+        type: 'projects',
+        items: projectBullets,
+      });
+    }
+  }
+
+  // Certifications (from activities.achievements)
+  if (activities?.achievements) {
+    const certBullets = extractBulletsFromHtml(activities.achievements);
+    if (certBullets.length > 0) {
+      sections.push({
+        name: 'Certifications',
+        type: 'list',
+        items: certBullets,
+      });
+    }
   }
 
   return sections;

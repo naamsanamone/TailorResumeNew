@@ -30,6 +30,7 @@ import { useVoluteeringStore } from '@/stores/volunteering';
 import { Menu, MenuItem } from '@mui/material';
 import { applyImportedResumeJson } from './applyImportedResume';
 import { fetchAndApplyResumeFromUrl, formatImportUrlError } from './fetchResumeFromUrl';
+import ResumeUploadModal from './components/ResumeUploadModal';
 
 const TOTAL_TEMPLATES_AVAILABLE = Object.keys(AVAILABLE_TEMPLATES).length;
 
@@ -40,6 +41,7 @@ const NavBarLayout = () => {
   const [toastContent, setToastContent] = useState('');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const fileInputRef = useRef(null);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
 
   /** Auto-import when opening `/builder?importUrl=<encoded JSON URL>` (param removed after attempt). */
   useEffect(() => {
@@ -164,6 +166,9 @@ const NavBarLayout = () => {
         </NavBarMenu>
         <div className="hidden md:flex">
           <NavBarActions>
+            <StyledButton variant="text" onClick={() => setIsUploadOpen(true)}>
+              Upload Resume
+            </StyledButton>
             <StyledButton variant="text" onClick={exportResumeData}>
               Export
             </StyledButton>
@@ -212,6 +217,14 @@ const NavBarLayout = () => {
         <MenuItem onClick={exportResumeData}>Export</MenuItem>
         <MenuItem
           onClick={() => {
+            setIsUploadOpen(true);
+            handleMenuClose();
+          }}
+        >
+          Upload Resume
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
             if (fileInputRef.current) {
               const fileElement = fileInputRef.current as HTMLInputElement;
               fileElement.click();
@@ -236,6 +249,14 @@ const NavBarLayout = () => {
           setOpenToast(false);
         }}
         content={toastContent}
+      />
+      <ResumeUploadModal
+        open={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        onSuccess={() => {
+          setToastContent('Resume uploaded and loaded successfully!');
+          setOpenToast(true);
+        }}
       />
     </nav>
   );

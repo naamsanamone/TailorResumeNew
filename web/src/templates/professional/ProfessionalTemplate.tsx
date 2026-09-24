@@ -80,6 +80,41 @@ export default function ProfessionalTemplate() {
             </Section>
           </SectionValidator>
         );
+      case 'projects':
+        return involvements ? (
+          <Section title="Projects">
+            <Involvement data={involvements} />
+          </Section>
+        ) : null;
+      case 'certifications':
+        return achievements ? (
+          <Section title="Certifications">
+            <Achievements data={achievements} />
+          </Section>
+        ) : null;
+      case 'awards':
+        return resumeData.activities?.achievementsHtml ? (
+          <Section title="Achievements">
+            <div
+              style={{ fontSize: '11px', lineHeight: 1.5 }}
+              dangerouslySetInnerHTML={{ __html: resumeData.activities.achievementsHtml }}
+            />
+          </Section>
+        ) : null;
+      case 'volunteer_exp':
+        return resumeData.volunteer?.length ? (
+          <SectionValidator value={resumeData.volunteer}>
+            <Section title="Volunteer Experience">
+              {resumeData.volunteer.map((v: any) => (
+                <div key={v.id} style={{ marginBottom: 6 }}>
+                  <strong style={{ fontSize: '12px' }}>{v.position}</strong>
+                  <div style={{ fontSize: '11px', color: '#666' }}>{v.organization}</div>
+                  {v.summary && <p style={{ fontSize: '11px', margin: '2px 0 0' }}>{v.summary}</p>}
+                </div>
+              ))}
+            </Section>
+          </SectionValidator>
+        ) : null;
       default:
         return null;
     }
@@ -145,6 +180,33 @@ export default function ProfessionalTemplate() {
             </Section>
           </SectionValidator>
         );
+      case 'certifications':
+        return achievements ? (
+          <Section title="Certifications">
+            <Achievements data={achievements} />
+          </Section>
+        ) : null;
+      case 'awards':
+        return resumeData.activities?.achievementsHtml ? (
+          <Section title="Achievements">
+            <div
+              style={{ fontSize: '11px', lineHeight: 1.5 }}
+              dangerouslySetInnerHTML={{ __html: resumeData.activities.achievementsHtml }}
+            />
+          </Section>
+        ) : null;
+      case 'volunteer_exp':
+        return resumeData.volunteer?.length ? (
+          <Section title="Volunteer Experience">
+            {resumeData.volunteer.map((v: any) => (
+              <div key={v.id} style={{ marginBottom: 6 }}>
+                <strong style={{ fontSize: '12px' }}>{v.position}</strong>
+                <div style={{ fontSize: '11px', color: '#666' }}>{v.organization}</div>
+                {v.summary && <p style={{ fontSize: '11px', margin: '2px 0 0' }}>{v.summary}</p>}
+              </div>
+            ))}
+          </Section>
+        ) : null;
       default:
         return null;
     }

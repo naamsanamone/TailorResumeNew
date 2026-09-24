@@ -5,7 +5,7 @@ const hasLen = (v: unknown) =>
 export const basicsSummary = (r: any) => hasLen(r.basics?.summary);
 export const basicsObjective = (r: any) => hasLen(r.basics?.objective);
 export const work = (r: any) => hasLen(r.work);
-export const awards = (r: any) => hasLen(r.awards);
+export const awards = (r: any) => hasLen(r.activities?.achievementsHtml);
 export const education = (r: any) => hasLen(r.education);
 export const volunteer = (r: any) => hasLen(r.volunteer);
 export const involvement = (r: any) => hasLen(r.activities?.involvements);
@@ -29,3 +29,7 @@ export const skillsMerged = (r: any) =>
   hasLen(r.skills?.languages?.concat(r.skills?.frameworks, r.skills?.tools));
 
 export const stackToolsDatabases = (r: any) => hasLen(r.skills?.tools?.concat(r.skills?.databases));
+
+export const certifications = (r: any) => hasLen(r.activities?.achievements);
+
+export const projects = (r: any) => hasLen(r.activities?.involvements);

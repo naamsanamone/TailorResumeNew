@@ -34,11 +34,15 @@ export default function MordernTemplate() {
           </SectionValidator>
         );
       case 'awards':
-        return (
-          <SectionValidator value={resumeData.awards}>
-            <AwardSection awardsReceived={resumeData.awards} />
-          </SectionValidator>
-        );
+        return resumeData.activities?.achievementsHtml ? (
+          <div style={{ marginBottom: 12 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Achievements</h3>
+            <div
+              style={{ fontSize: 12, lineHeight: 1.5 }}
+              dangerouslySetInnerHTML={{ __html: resumeData.activities.achievementsHtml }}
+            />
+          </div>
+        ) : null;
       case 'objective':
         return (
           <SectionValidator value={resumeData.basics.objective}>
@@ -84,6 +88,20 @@ export default function MordernTemplate() {
             <VolunteerSection volunteer={resumeData.volunteer} />
           </SectionValidator>
         );
+      case 'projects':
+        return resumeData.activities?.involvements ? (
+          <div>
+            <h3 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6, color: '#475569' }}>Projects</h3>
+            <div style={{ fontSize: '12px', lineHeight: 1.5 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.involvements }} />
+          </div>
+        ) : null;
+      case 'certifications':
+        return resumeData.activities?.achievements ? (
+          <div>
+            <h3 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6, color: '#475569' }}>Certifications</h3>
+            <div style={{ fontSize: '12px', lineHeight: 1.5 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.achievements }} />
+          </div>
+        ) : null;
       default:
         return null;
     }

@@ -1,7 +1,13 @@
-import { BsEnvelope, BsGeoAlt, BsGlobe, BsTelephone } from 'react-icons/bs';
+import { BsEnvelope, BsGeoAlt, BsGlobe, BsTelephone, BsLinkedin, BsGithub } from 'react-icons/bs';
 
 import { ContactLine } from '@/templates/common/palette-ui';
 import type { ResumePalette } from '@/templates/common/resumePalette';
+
+type Profile = {
+  network: string;
+  username?: string;
+  url: string;
+};
 
 type Basics = {
   name: string;
@@ -10,9 +16,17 @@ type Basics = {
   email?: string;
   url?: string;
   location?: { city?: string };
+  profiles?: Profile[];
 };
 
 export function Header({ basics, p }: { basics: Basics; p: ResumePalette }) {
+  const linkedin = basics.profiles?.find(
+    (pr) => pr.network.toLowerCase() === 'linkedin'
+  );
+  const github = basics.profiles?.find(
+    (pr) => pr.network.toLowerCase() === 'github'
+  );
+
   return (
     <div
       style={{
@@ -60,6 +74,20 @@ export function Header({ basics, p }: { basics: Basics; p: ResumePalette }) {
         {basics.email && <ContactLine icon={<BsEnvelope />} text={basics.email} />}
         {basics.location?.city && <ContactLine icon={<BsGeoAlt />} text={basics.location.city} />}
         {basics.url && <ContactLine icon={<BsGlobe />} text={basics.url} href={basics.url} />}
+        {linkedin && (
+          <ContactLine
+            icon={<BsLinkedin />}
+            text={linkedin.username || linkedin.url.replace(/.*linkedin\.com\/in\//, '').replace(/\/$/, '')}
+            href={linkedin.url}
+          />
+        )}
+        {github && (
+          <ContactLine
+            icon={<BsGithub />}
+            text={github.username || github.url.replace(/.*github\.com\//, '').replace(/\/$/, '')}
+            href={github.url}
+          />
+        )}
       </div>
     </div>
   );

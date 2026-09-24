@@ -8,9 +8,9 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { mergeResumePalette, useResumePalette, withAlpha } from '@/templates/common/resumePalette';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
 
 import { AsideIntro } from './components/AsideIntro';
-import { Awards } from './components/Awards';
 import { Education } from './components/Education';
 import { MainIntro } from './components/MainIntro';
 import { Skills } from './components/Skills';
@@ -46,6 +46,14 @@ export default function SidebarLeftTemplate() {
         );
       case 'education':
         return <Education education={data.education} titlePalette={side} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
+      case 'awards':
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }
@@ -57,8 +65,14 @@ export default function SidebarLeftTemplate() {
         return <Summary summary={basics.summary} p={resumePalette} />;
       case 'work':
         return <Work work={data.work} p={resumePalette} />;
+      case 'projects':
+        return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
+      case 'certifications':
+        return <CertificationsSection achievements={data.activities.achievements} p={resumePalette} />;
       case 'awards':
-        return <Awards html={data.activities?.achievements} p={resumePalette} />;
+        return <AchievementsSection achievementsHtml={data.activities.achievementsHtml} p={resumePalette} />;
+      case 'volunteer_exp':
+        return <VolunteerSection volunteer={data.volunteer} p={resumePalette} />;
       default:
         return null;
     }

@@ -7,7 +7,10 @@ import { SetState } from './store.interface';
 
 const setAllAwards = (set: SetState<IActivityStore>) => (activityItem: IActivity) => {
   set({
-    activities: activityItem,
+    activities: {
+      ...activityItem,
+      achievementsHtml: activityItem.achievementsHtml || '',
+    },
   });
 };
 
@@ -27,15 +30,27 @@ const updateInvolvements = (set: SetState<IActivityStore>) => (involvements: str
   );
 };
 
+const updateAchievementsHtml = (set: SetState<IActivityStore>) => (achievementsHtml: string) => {
+  set(
+    produce((state: IActivityStore) => {
+      state.activities.achievementsHtml = achievementsHtml;
+    })
+  );
+};
+
 export const useActivity = create<IActivityStore>()(
   persist(
     (set, get) => ({
-      activities: resumeData.activities,
+      activities: {
+        ...resumeData.activities,
+        achievementsHtml: (resumeData.activities as any).achievementsHtml || '',
+      },
 
       get: () => get().activities,
       reset: setAllAwards(set),
       updateAchievements: updateAchievements(set),
       updateInvolvements: updateInvolvements(set),
+      updateAchievementsHtml: updateAchievementsHtml(set),
     }),
     { name: 'activities' }
   )
