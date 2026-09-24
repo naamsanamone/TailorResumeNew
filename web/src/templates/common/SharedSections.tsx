@@ -95,6 +95,9 @@ export const AchievementsSection = ({
   );
 };
 
+/* Backwards compatibility alias */
+export const AwardsSection = AchievementsSection;
+
 /* ─── Volunteer ─── */
 export const VolunteerSection = ({
   volunteer,

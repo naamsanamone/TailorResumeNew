@@ -226,20 +226,24 @@ export function applyParsedSections(sections: ResumeSection[]): void {
     }
 
     // Certifications / List sections → activities.achievements (HTML)
-    if (type === 'list' && sec.items && sec.items.length > 0) {
-      const sectionName = (sec.name || '').toLowerCase();
-      if (sectionName.includes('certif') || sectionName.includes('license') || sectionName.includes('course')) {
-        const html = `<ul>${sec.items.map((item: string) => `<li>${item}</li>`).join('')}</ul>`;
-        foundCertifications = html;
+    const isCertSec = (sec.name || '').toLowerCase().match(/certif|license|course/i);
+    if (isCertSec) {
+      if (sec.items && sec.items.length > 0) {
+        foundCertifications = `<ul>${sec.items.map((item: string) => `<li>${item}</li>`).join('')}</ul>`;
+      } else if (sec.text) {
+        const lines = sec.text.split('\n').filter((l: string) => l.trim().length > 0);
+        foundCertifications = `<ul>${lines.map((l: string) => `<li>${l.replace(/^[•\-–·*▪►○\d+\.]\s*/, '').trim()}</li>`).join('')}</ul>`;
       }
     }
 
     // Awards/Achievements/Honors → achievementsHtml (HTML)
-    if (type === 'list' && sec.items && sec.items.length > 0) {
-      const sectionName = (sec.name || '').toLowerCase();
-      if (sectionName.includes('award') || sectionName.includes('honor') || sectionName.includes('achievement')) {
-        const html = `<ul>${sec.items.map((item: string) => `<li>${item}</li>`).join('')}</ul>`;
-        foundAchievementsHtml = html;
+    const isAchievementSec = (sec.name || '').toLowerCase().match(/award|honor|achievement/i);
+    if (isAchievementSec) {
+      if (sec.items && sec.items.length > 0) {
+        foundAchievementsHtml = `<ul>${sec.items.map((item: string) => `<li>${item}</li>`).join('')}</ul>`;
+      } else if (sec.text) {
+        const lines = sec.text.split('\n').filter((l: string) => l.trim().length > 0);
+        foundAchievementsHtml = `<ul>${lines.map((l: string) => `<li>${l.replace(/^[•\-–·*▪►○\d+\.]\s*/, '').trim()}</li>`).join('')}</ul>`;
       }
     }
   }

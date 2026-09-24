@@ -328,11 +328,28 @@ def _build_section(heading: str, lines: List[str]) -> Dict[str, Any]:
         }
 
     if sec_type == "list":
-        items = [re.sub(r"^[•\-–·*▪►○]\s*", "", l) for l in lines]
+        items = []
+        current_item = ""
+        bullet_pattern = r"^[•\-–·*▪►○\d+\.]\s*"
+        for l in lines:
+            stripped = l.strip()
+            if not stripped:
+                continue
+            if re.match(bullet_pattern, stripped):
+                if current_item:
+                    items.append(current_item.strip())
+                current_item = re.sub(bullet_pattern, "", stripped)
+            else:
+                if current_item:
+                    current_item += " " + stripped
+                else:
+                    current_item = stripped
+        if current_item:
+            items.append(current_item.strip())
         return {
             "name": heading,
             "type": "list",
-            "items": items,
+            "items": items if items else [re.sub(r"^[•\-–·*▪►○]\s*", "", l).strip() for l in lines if l.strip()],
         }
 
     # custom

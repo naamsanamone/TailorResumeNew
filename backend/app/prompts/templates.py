@@ -79,6 +79,11 @@ JSON Schema structure expected for 'sections':
     "items": ["certification name 1", "certification name 2"]
   }},
   {{
+    "name": "Achievements",
+    "type": "list",
+    "items": ["achievement bullet 1", "achievement bullet 2", "achievement bullet 3"]
+  }},
+  {{
     "name": "Awards",
     "type": "list",
     "items": ["award 1", "award 2"]
@@ -93,9 +98,10 @@ JSON Schema structure expected for 'sections':
 IMPORTANT extraction rules:
 1. For Skills: Categorize into Languages, Frameworks, Databases, Tools, and Technologies.
 2. For Certifications: Extract ALL certifications mentioned anywhere, even if embedded in the summary or experience text. Look for keywords like "Certified", "Certificate", "Certification", "Licensed", "Accredited".
-3. For LinkedIn/GitHub: Extract the FULL URL including https://.
-4. For Projects: If no separate Projects section exists but experience bullets mention specific projects, do NOT create a projects section.
-5. Only include sections that have actual content in the resume.
+3. For Achievements: Extract EVERY bullet point under Achievements, Honors, or Recognitions verbatim as an individual item. Do not truncate, combine, or omit ANY bullet point.
+4. For LinkedIn/GitHub: Extract the FULL URL including https://.
+5. For Projects: If no separate Projects section exists but experience bullets mention specific projects, do NOT create a projects section.
+6. Only include sections that have actual content in the resume.
 
 Respond ONLY with valid JSON. Example: {{"sections": [...]}}
 """
