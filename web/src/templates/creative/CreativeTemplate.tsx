@@ -8,7 +8,8 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette } from '@/templates/common/resumePalette';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { ContactCard } from './components/ContactCard';
 import { Education } from './components/Education';
@@ -21,9 +22,15 @@ export default function CreativeTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
 
   const renderSidebar = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'skills':
         return (
@@ -45,6 +52,11 @@ export default function CreativeTemplate() {
   };
 
   const renderMain = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'summary':
         return <Summary summary={basics.summary} p={resumePalette} />;

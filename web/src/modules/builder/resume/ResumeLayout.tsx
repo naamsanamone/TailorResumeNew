@@ -19,6 +19,7 @@ import { useTemplates } from '@/stores/useTemplate';
 import { useThemes } from '@/stores/themes';
 import { useZoom, ZOOM_MIN } from '@/stores/useZoom';
 import { useSectionLayoutStore } from '@/stores/useSectionLayoutStore';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 // TODO: need to define types
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -33,9 +34,10 @@ function ResumeSectionLayoutShell({
   resumeData: ReturnType<typeof useResumeStore>;
   children: ReactNode;
 }) {
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const allowed = useMemo(
     () => getAllowedSectionIdsForTemplate(templateId, resumeData),
-    [templateId, resumeData]
+    [templateId, resumeData, customSections]
   );
   const { regions, setRegions, regionKeys } = useTemplateSectionLayout(templateId, allowed);
   const isReorderMode = useSectionLayoutStore((state) => state.isReorderMode);

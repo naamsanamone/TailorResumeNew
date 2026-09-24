@@ -8,7 +8,8 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { mergeResumePalette, useResumePalette, withAlpha } from '@/templates/common/resumePalette';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { AsideIntro } from './components/AsideIntro';
 import { Education } from './components/Education';
@@ -21,6 +22,7 @@ export default function SidebarLeftTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
   const side = mergeResumePalette(resumePalette, {
     primary: resumePalette.sidebarText,
@@ -35,6 +37,11 @@ export default function SidebarLeftTemplate() {
   });
 
   const renderSidebar = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={side} />;
+    }
+
     switch (sectionId) {
       case 'skills':
         return (
@@ -60,6 +67,11 @@ export default function SidebarLeftTemplate() {
   };
 
   const renderMain = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'summary':
         return <Summary summary={basics.summary} p={resumePalette} />;

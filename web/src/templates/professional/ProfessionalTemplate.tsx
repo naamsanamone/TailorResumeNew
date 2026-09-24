@@ -18,6 +18,7 @@ import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import UnratedSkills from './components/UnratedSkills';
 import Work from './components/Work';
 import styled from '@emotion/styled';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 const ResumeContainer = styled.div`
   display: flex;
@@ -59,11 +60,24 @@ const RightSection = styled.div`
 export default function ProfessionalTemplate() {
   const resumeData = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const skills = resumeData.skills;
   const involvements = resumeData.activities.involvements;
   const achievements = resumeData.activities.achievements;
 
   const renderLeft = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec && customSec.content && customSec.content.trim()) {
+      return (
+        <Section title={customSec.title}>
+          <div
+            style={{ fontSize: '11px', lineHeight: 1.5 }}
+            dangerouslySetInnerHTML={{ __html: customSec.content }}
+          />
+        </Section>
+      );
+    }
+
     switch (sectionId) {
       case 'work':
         return (
@@ -130,6 +144,18 @@ export default function ProfessionalTemplate() {
   };
 
   const renderRight = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec && customSec.content && customSec.content.trim()) {
+      return (
+        <Section title={customSec.title}>
+          <div
+            style={{ fontSize: '11px', lineHeight: 1.5 }}
+            dangerouslySetInnerHTML={{ __html: customSec.content }}
+          />
+        </Section>
+      );
+    }
+
     switch (sectionId) {
       case 'summary':
         return (

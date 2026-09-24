@@ -14,15 +14,22 @@ import { Header } from './components/Header';
 import { Skills } from './components/Skills';
 import { Summary } from './components/Summary';
 import { Work } from './components/Work';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 export default function ClassicTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
 
   const renderSection = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'summary':
         return <Summary summary={basics.summary} p={resumePalette} />;

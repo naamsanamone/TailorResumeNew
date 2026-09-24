@@ -14,12 +14,29 @@ import {
   SortableTemplateSection,
   useSectionLayoutRuntime,
 } from '@/helpers/section-layout';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 export default function MordernTemplate() {
   const resumeData = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
 
   const renderSection = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec && customSec.content && customSec.content.trim()) {
+      return (
+        <div style={{ marginBottom: 12 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: '#334155' }}>
+            {customSec.title}
+          </h3>
+          <div
+            style={{ fontSize: 12, lineHeight: 1.5 }}
+            dangerouslySetInnerHTML={{ __html: customSec.content }}
+          />
+        </div>
+      );
+    }
+
     switch (sectionId) {
       case 'summary':
         return (

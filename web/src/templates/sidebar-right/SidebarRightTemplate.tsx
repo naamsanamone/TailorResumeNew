@@ -8,7 +8,8 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette, withAlpha } from '@/templates/common/resumePalette';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { AsideIntro } from './components/AsideIntro';
 import { Education } from './components/Education';
@@ -22,16 +23,20 @@ export default function SidebarRightTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
 
   const renderMain = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'summary':
         return <Summary summary={basics.summary} p={resumePalette} />;
       case 'work':
         return <Work work={data.work} p={resumePalette} />;
-      case 'projects':
-        return <Projects html={data.activities?.involvements} p={resumePalette} />;
       case 'projects':
         return <ProjectsSection involvements={data.activities.involvements} p={resumePalette} />;
       case 'certifications':
@@ -46,6 +51,11 @@ export default function SidebarRightTemplate() {
   };
 
   const renderSidebar = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'skills':
         return (

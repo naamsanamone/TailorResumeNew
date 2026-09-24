@@ -1,18 +1,41 @@
 import { CSSProperties } from 'react';
 
 import type { ResumePalette } from '@/templates/common/resumePalette';
+import { useCustomSectionsStore } from '@/stores/customSections';
+
+function resolveSectionIdFromTitle(title: string): string | undefined {
+  const t = title.toLowerCase().trim().replace(/^\/\/\s*/, '');
+  if (t.includes('experience') || t.includes('work') || t.includes('employment')) return 'experience';
+  if (t.includes('education') || t.includes('academic')) return 'education';
+  if (t.includes('project')) return 'projects';
+  if (t.includes('skill')) return 'skills-and-expertise';
+  if (t.includes('profile') || t.includes('summary') || t.includes('about')) return 'basic-details';
+  if (t.includes('certif') || t.includes('license')) return 'certifications';
+  if (t.includes('achievement') || t.includes('award') || t.includes('honor')) return 'achievements';
+  if (t.includes('volunteer')) return 'volunteering';
+  return undefined;
+}
 
 export const SectionHeading = ({
   title,
   p,
   variant = 'bar',
   align = 'left',
+  sectionId,
 }: {
   title: string;
   p: ResumePalette;
   variant?: 'bar' | 'underline' | 'pill' | 'line' | 'caps';
   align?: 'left' | 'center';
+  sectionId?: string;
 }) => {
+  const targetId = sectionId || resolveSectionIdFromTitle(title);
+  const customTitle = useCustomSectionsStore((s) => {
+    if (!targetId) return undefined;
+    return s.sectionTitles[targetId] || (targetId === 'basic-details' ? s.sectionTitles['summary'] : undefined);
+  });
+  const displayTitle = customTitle && customTitle.trim() ? customTitle : title;
+
   const baseStyle: CSSProperties = {
     color: p.primary,
     fontFamily: p.headingFont,
@@ -37,7 +60,7 @@ export const SectionHeading = ({
             fontSize: 11,
           }}
         >
-          {title}
+          {displayTitle}
         </h3>
       </div>
     );
@@ -53,7 +76,7 @@ export const SectionHeading = ({
           fontSize: 11,
         }}
       >
-        {title}
+        {displayTitle}
       </h3>
     );
   }
@@ -72,7 +95,7 @@ export const SectionHeading = ({
           letterSpacing: '0.14em',
         }}
       >
-        {title}
+        {displayTitle}
       </h3>
     );
   }
@@ -89,11 +112,11 @@ export const SectionHeading = ({
             fontSize: 11,
           }}
         >
-          {title}
+          {displayTitle}
         </h3>
         <span style={{ flex: 1, height: 1, background: p.divider }} />
       </div>
     );
   }
-  return <h3 style={baseStyle}>{title}</h3>;
+  return <h3 style={baseStyle}>{displayTitle}</h3>;
 };

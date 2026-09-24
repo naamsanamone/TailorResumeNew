@@ -6,6 +6,8 @@ import ErrorBoundary from '@/helpers/common/components/ErrorBoundary';
 import { OutlinedButton } from '@/helpers/common/atoms/Buttons';
 import { headers } from '@/helpers/constants/editor-data';
 import { resetResumeStore } from '@/stores/useResumeStore';
+import CustomSectionLayout from './modules/custom/CustomSectionLayout';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 const ConfirmationBox = ({
   handleModalCloseAction,
@@ -44,7 +46,25 @@ const ConfirmationBox = ({
 const EditorLayout = () => {
   const [link, setLink] = useState('');
   const [shouldOpenModal, setShouldOpenModal] = useState(false);
-  const section = headers[link];
+
+  const customSections = useCustomSectionsStore((state) => state.customSections);
+  const sectionTitles = useCustomSectionsStore((state) => state.sectionTitles);
+
+  const customSec = customSections.find((cs) => cs.id === link);
+
+  const section = headers[link]
+    ? {
+        title: sectionTitles[link] || headers[link].title,
+        component: headers[link].component,
+      }
+    : customSec
+    ? {
+        title: customSec.title,
+        component: () => (
+          <CustomSectionLayout sectionId={link} onDelete={() => setLink('')} />
+        ),
+      }
+    : null;
 
   const linkClickHandler = (link: string) => {
     setLink(link);
@@ -56,11 +76,12 @@ const EditorLayout = () => {
 
   const handleConfirmationAction = () => {
     resetResumeStore();
+    useCustomSectionsStore.getState().resetAll();
     confirmationModalHandler();
   };
 
-  const displayElement = link ? (
-    <EditSection section={section} onLinkClick={linkClickHandler} />
+  const displayElement = link && section ? (
+    <EditSection section={section} sectionKey={link} onLinkClick={linkClickHandler} />
   ) : (
     <DataHeaders onLinkClick={linkClickHandler} />
   );

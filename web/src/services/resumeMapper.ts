@@ -161,6 +161,24 @@ export function zustandToSections(
     }
   }
 
+  // Custom User Sections
+  try {
+    const { useCustomSectionsStore } = require('@/stores/customSections');
+    const customSections = useCustomSectionsStore.getState().customSections;
+    for (const cs of customSections) {
+      if (cs.content && cs.content.trim()) {
+        const bullets = extractBulletsFromHtml(cs.content);
+        sections.push({
+          name: cs.title,
+          type: 'list',
+          items: bullets.length > 0 ? bullets : [cs.content.replace(/<[^>]+>/g, '').trim()],
+        });
+      }
+    }
+  } catch (e) {
+    // ignore in environments where store might not be available
+  }
+
   return sections;
 }
 

@@ -9,7 +9,8 @@ import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette } from '@/templates/common/resumePalette';
 import type { ResumePalette } from '@/templates/common/resumePalette';
 import type { IWorkIntrf, IEducation, IAwards, IItem } from '@/stores/index.interface';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 const Header = ({ basics, p }: { basics: any; p: ResumePalette }) => {
   const linkedin = basics.profiles?.find((pr: any) => pr.network.toLowerCase() === 'linkedin');
@@ -125,8 +126,14 @@ export default function ResumaveTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const p = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
 
   const renderSection = (id: string) => {
+    const customSec = customSections.find((cs) => cs.id === id);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={p} />;
+    }
+
     switch (id) {
       case 'summary': return <Summary summary={data.basics.summary} p={p} />;
       case 'work': return <Work work={data.work} p={p} />;

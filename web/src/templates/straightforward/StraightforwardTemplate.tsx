@@ -8,8 +8,9 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette, withAlpha } from '@/templates/common/resumePalette';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
 import { SECTION_IDS } from '@/templates/registry/sectionIds';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { Education } from './components/Education';
 import { Header } from './components/Header';
@@ -22,10 +23,16 @@ export default function StraightforwardTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
   const skills = data.skills.languages.concat(data.skills.frameworks, data.skills.tools);
 
   const renderSidebar = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case SECTION_IDS.education:
         return <Education education={data.education} p={resumePalette} />;
@@ -46,6 +53,11 @@ export default function StraightforwardTemplate() {
   };
 
   const renderMain = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case SECTION_IDS.summary:
         return <Summary summary={basics.summary} p={resumePalette} />;

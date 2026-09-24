@@ -8,7 +8,8 @@ import {
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { pageStyle } from '@/templates/common/palette-ui';
 import { useResumePalette, withAlpha } from '@/templates/common/resumePalette';
-import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection } from '@/templates/common/SharedSections';
+import { ProjectsSection, CertificationsSection, AchievementsSection, VolunteerSection, CustomSectionRenderer } from '@/templates/common/SharedSections';
+import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { Education } from './components/Education';
 import { Hero } from './components/Hero';
@@ -20,9 +21,15 @@ export default function InspiredTemplate() {
   const data = useContext(StateContext);
   const { regions } = useSectionLayoutRuntime();
   const resumePalette = useResumePalette();
+  const customSections = useCustomSectionsStore((state) => state.customSections);
   const basics = data.basics;
 
   const renderMain = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'work':
         return <Work work={data.work} p={resumePalette} />;
@@ -42,6 +49,11 @@ export default function InspiredTemplate() {
   };
 
   const renderSidebar = (sectionId: string) => {
+    const customSec = customSections.find((cs) => cs.id === sectionId);
+    if (customSec) {
+      return <CustomSectionRenderer section={customSec} p={resumePalette} />;
+    }
+
     switch (sectionId) {
       case 'summary':
         return <Summary summary={basics.summary} p={resumePalette} />;

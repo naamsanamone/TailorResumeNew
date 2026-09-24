@@ -10,6 +10,7 @@ import {
 
 import ResumeData from '@/helpers/constants/resume-data.json';
 import { useSectionLayoutStore } from '@/stores/useSectionLayoutStore';
+import { useCustomSectionsStore } from '@/stores/customSections';
 import { useActivity } from './activity';
 import { useAwards } from './awards';
 import { useBasicDetails } from './basic';
@@ -56,4 +57,5 @@ export const resetResumeStore = () => {
   useAwards.getState().reset(ResumeData.awards);
   useActivity.getState().reset(ResumeData.activities);
   useSectionLayoutStore.getState().resetAll();
+  useCustomSectionsStore.getState().resetAll();
 };
