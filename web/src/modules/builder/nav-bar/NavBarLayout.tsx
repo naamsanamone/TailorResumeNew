@@ -41,6 +41,7 @@ const NavBarLayout = () => {
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState('');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const fileInputRef = useRef(null);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 
@@ -211,28 +212,26 @@ const NavBarLayout = () => {
                 Tailor Resume
               </button>
             </div>
-            <StyledButton variant="text" onClick={exportResumeData}>
-              Export
-            </StyledButton>
-            <StyledButton
-              variant="text"
-              onClick={() => {
-                if (fileInputRef.current) {
-                  const fileElement = fileInputRef.current as HTMLInputElement;
-                  fileElement.click();
-                }
-              }}
-            >
-              Import{' '}
-              <input
-                type="file"
-                hidden
-                ref={fileInputRef}
-                accept="application/json"
-                onChange={handleFileChange}
-              />
-            </StyledButton>
             <PrintResume />
+            <button
+              onClick={(e) => setActionsMenuAnchor(e.currentTarget)}
+              className="w-8 h-8 rounded-lg bg-[#161c30] border border-indigo-500/25 hover:border-indigo-400/50 hover:bg-[#1d2542] text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-xs"
+              aria-label="More options"
+              title="More options (Export / Import JSON)"
+            >
+              <svg className="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="19" cy="12" r="2" />
+                <circle cx="5" cy="12" r="2" />
+              </svg>
+            </button>
+            <input
+              type="file"
+              hidden
+              ref={fileInputRef}
+              accept="application/json"
+              onChange={handleFileChange}
+            />
           </NavBarActions>
         </div>
         <button
@@ -243,6 +242,67 @@ const NavBarLayout = () => {
           <Image src="/icons/more-horizontal.svg" alt="back" width={25} height={25} />
         </button>
       </div>
+
+      {/* Desktop More Actions Menu */}
+      <Menu
+        anchorEl={actionsMenuAnchor}
+        open={Boolean(actionsMenuAnchor)}
+        onClose={() => setActionsMenuAnchor(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              minWidth: 170,
+              backgroundColor: '#13192B',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: '12px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            },
+          },
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            exportResumeData();
+            setActionsMenuAnchor(null);
+          }}
+          className="flex items-center gap-2.5 text-xs font-semibold py-2 px-3 text-slate-200 hover:text-white hover:bg-indigo-500/15"
+        >
+          <svg className="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>Export JSON</span>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (fileInputRef.current) {
+              const fileElement = fileInputRef.current as HTMLInputElement;
+              fileElement.click();
+            }
+            setActionsMenuAnchor(null);
+          }}
+          className="flex items-center gap-2.5 text-xs font-semibold py-2 px-3 text-slate-200 hover:text-white hover:bg-indigo-500/15"
+        >
+          <svg className="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>Import JSON</span>
+        </MenuItem>
+      </Menu>
+
+      {/* Mobile Drawer Menu */}
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -278,7 +338,7 @@ const NavBarLayout = () => {
             handleMenuClose();
           }}
         >
-          Export
+          Export JSON
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -289,14 +349,7 @@ const NavBarLayout = () => {
             handleMenuClose();
           }}
         >
-          Import
-          <input
-            type="file"
-            hidden
-            ref={fileInputRef}
-            accept="application/json"
-            onChange={handleFileChange}
-          />
+          Import JSON
         </MenuItem>
         <PrintResume isMenuButton />
       </Menu>
