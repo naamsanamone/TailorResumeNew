@@ -9,6 +9,9 @@ import { resetResumeStore } from '@/stores/useResumeStore';
 import CustomSectionLayout from './modules/custom/CustomSectionLayout';
 import { useCustomSectionsStore } from '@/stores/customSections';
 
+import TailorLayout from './modules/tailor/TailorLayout';
+import { useActiveSectionStore } from '@/stores/useActiveSectionStore';
+
 const ConfirmationBox = ({
   handleModalCloseAction,
   handleModalConfirmation,
@@ -44,7 +47,8 @@ const ConfirmationBox = ({
 };
 
 const EditorLayout = () => {
-  const [link, setLink] = useState('');
+  const link = useActiveSectionStore((state) => state.activeSection);
+  const setLink = useActiveSectionStore((state) => state.setActiveSection);
   const [shouldOpenModal, setShouldOpenModal] = useState(false);
 
   const customSections = useCustomSectionsStore((state) => state.customSections);
@@ -52,19 +56,25 @@ const EditorLayout = () => {
 
   const customSec = customSections.find((cs) => cs.id === link);
 
-  const section = headers[link]
-    ? {
-        title: sectionTitles[link] || headers[link].title,
-        component: headers[link].component,
-      }
-    : customSec
-    ? {
-        title: customSec.title,
-        component: () => (
-          <CustomSectionLayout sectionId={link} onDelete={() => setLink('')} />
-        ),
-      }
-    : null;
+  const section =
+    link === 'tailor'
+      ? {
+          title: 'Tailor Resume',
+          component: TailorLayout,
+        }
+      : headers[link]
+      ? {
+          title: sectionTitles[link] || headers[link].title,
+          component: headers[link].component,
+        }
+      : customSec
+      ? {
+          title: customSec.title,
+          component: () => (
+            <CustomSectionLayout sectionId={link} onDelete={() => setLink('')} />
+          ),
+        }
+      : null;
 
   const linkClickHandler = (link: string) => {
     setLink(link);

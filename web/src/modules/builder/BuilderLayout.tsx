@@ -8,13 +8,14 @@ import ResumeHeader from './resume/components/ResumeHeader';
 import { ResumeLayout } from './resume/ResumeLayout';
 import Tooltip from '@mui/material/Tooltip';
 
-type MobileTab = 'preview' | 'edit';
+import { useActiveSectionStore } from '@/stores/useActiveSectionStore';
 
 const segmentBtn =
   'flex-1 min-h-9 rounded-[4px] px-3 py-1.5 text-sm font-medium tracking-normal transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-resume-500 focus-visible:ring-offset-2 focus-visible:ring-offset-custom-grey100';
 
 const BuilderLayout = () => {
-  const [mobileTab, setMobileTab] = useState<MobileTab>('preview');
+  const mobileTab = useActiveSectionStore((state) => state.mobileTab);
+  const setMobileTab = useActiveSectionStore((state) => state.setMobileTab);
 
   return (
     <div className="flex flex-col h-screen min-h-0">

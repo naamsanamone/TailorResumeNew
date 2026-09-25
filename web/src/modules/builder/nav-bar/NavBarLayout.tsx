@@ -28,6 +28,7 @@ import { useEducations } from '@/stores/education';
 import { useExperiences } from '@/stores/experience';
 import { useVoluteeringStore } from '@/stores/volunteering';
 import { Menu, MenuItem } from '@mui/material';
+import { useActiveSectionStore } from '@/stores/useActiveSectionStore';
 import { applyImportedResumeJson } from './applyImportedResume';
 import { fetchAndApplyResumeFromUrl, formatImportUrlError } from './fetchResumeFromUrl';
 import ResumeUploadModal from './components/ResumeUploadModal';
@@ -169,6 +170,12 @@ const NavBarLayout = () => {
             <StyledButton variant="text" onClick={() => setIsUploadOpen(true)}>
               Upload Resume
             </StyledButton>
+            <StyledButton
+              variant="text"
+              onClick={() => useActiveSectionStore.getState().openTailor()}
+            >
+              Tailor Resume
+            </StyledButton>
             <StyledButton variant="text" onClick={exportResumeData}>
               Export
             </StyledButton>
@@ -214,7 +221,6 @@ const NavBarLayout = () => {
           horizontal: 'right',
         }}
       >
-        <MenuItem onClick={exportResumeData}>Export</MenuItem>
         <MenuItem
           onClick={() => {
             setIsUploadOpen(true);
@@ -222,6 +228,22 @@ const NavBarLayout = () => {
           }}
         >
           Upload Resume
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            useActiveSectionStore.getState().openTailor();
+            handleMenuClose();
+          }}
+        >
+          Tailor Resume
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            exportResumeData();
+            handleMenuClose();
+          }}
+        >
+          Export
         </MenuItem>
         <MenuItem
           onClick={() => {
