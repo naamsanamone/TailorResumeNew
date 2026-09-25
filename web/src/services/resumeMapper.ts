@@ -96,11 +96,12 @@ export function zustandToSections(
       entries: work.map((w) => {
         const fromHtml = extractBulletsFromHtml(w.summary || '');
         const bullets = fromHtml.length > 0 ? fromHtml : (w.highlights || []).filter(Boolean);
+        const dateRange = w.years || [w.startDate, w.endDate || (w.isWorkingHere ? 'Present' : '')].filter(Boolean).join(' – ');
         return {
           title: w.position,
           company: w.name,
           location: '',
-          duration: w.years || '',
+          duration: dateRange,
           bullets,
         };
       }),
@@ -112,14 +113,19 @@ export function zustandToSections(
     sections.push({
       name: 'Education',
       type: 'education',
-      entries: education.map((e) => ({
-        institution: e.institution,
-        degree: `${e.studyType}${e.area ? ' in ' + e.area : ''}`,
-        location: '',
-        year: e.score ? `GPA: ${e.score}` : '',
-      })),
+      entries: education.map((e) => {
+        const dateRange = [e.startDate, e.endDate || (e.isStudyingHere ? 'Present' : '')].filter(Boolean).join(' – ');
+        const yearParts = [dateRange, e.score ? `GPA: ${e.score}` : ''].filter(Boolean);
+        return {
+          institution: e.institution,
+          degree: `${e.studyType}${e.area ? ' in ' + e.area : ''}`,
+          location: '',
+          year: yearParts.join(' | '),
+        };
+      }),
     });
   }
+
 
   // Skills
   const skillCategories: Record<string, string> = {};

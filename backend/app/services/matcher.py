@@ -30,6 +30,19 @@ def normalize_skill(skill: str) -> str:
     s = re.sub(r'\s+', ' ', s)
     return s
 
+def skill_in_text(skill: str, text: str) -> bool:
+    """Check if skill appears in text using boundary-safe regex (handles C++, C#, .NET, etc.)."""
+    s = skill.lower().strip()
+    if not s or not text:
+        return False
+    if s in ('c', 'r'):
+        pattern = rf'(?<![a-zA-Z0-9]){re.escape(s)}(?![a-zA-Z0-9+#])'
+    else:
+        pattern = rf'(?<![a-zA-Z0-9]){re.escape(s)}(?![a-zA-Z0-9])'
+    return bool(re.search(pattern, text, re.IGNORECASE))
+
+
+
 def fuzzy_match(a: str, b: str) -> bool:
     """Check if normalized versions match (exact, contains, or abbreviated)."""
     norm_a = normalize_skill(a)
@@ -139,13 +152,18 @@ async def match_resume_to_jd(resume_sections: List[Dict[str, Any]], jd_analysis:
     for jd_skill in jd_skills_unique:
         skill_found = False
         
-        # Exact keyword match
-        norm_jd = normalize_skill(jd_skill)
-        escaped_skill = re.escape(norm_jd)
-        if re.search(rf'\b{escaped_skill}\b', resume_text):
+        # Exact keyword match (boundary-safe for C++, C#, .NET, Python, etc.)
+        if skill_in_text(jd_skill, resume_text):
             matched_skills.append({"skill": jd_skill, "match_type": "exact", "confidence": 1.0})
             skill_found = True
             continue
+
+        norm_jd = normalize_skill(jd_skill)
+        if norm_jd != jd_skill.lower().strip() and skill_in_text(norm_jd, resume_text):
+            matched_skills.append({"skill": jd_skill, "match_type": "exact", "confidence": 1.0})
+            skill_found = True
+            continue
+
             
         # Fuzzy / stem match using n-gram windows
         skill_word_count = len(norm_jd.split())

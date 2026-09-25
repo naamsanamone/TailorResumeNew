@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any, List, Optional
 from app.services.jd_analyzer import analyze_job_description
-from app.services.matcher import match_resume_to_jd
+from app.services.matcher import match_resume_to_jd, skill_in_text
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +36,20 @@ async def calculate_ats_score(
     
     section_types = [sec.get("type", "").lower() for sec in resume_sections]
     
-    expected_sections = ["header", "summary", "skills", "experience", "education"]
+    # 4 Core ATS sections: header, skills, experience, education (20 pts each = 80 pts)
+    core_sections = ["header", "skills", "experience", "education"]
     missing_sections = []
-    for sec in expected_sections:
+    for sec in core_sections:
         if sec not in section_types:
             completeness_score -= 20.0
             missing_sections.append(sec)
+            
+    # Remaining 20 pts: Summary OR Projects OR Certifications (standard ATS alternatives)
+    has_supplementary = any(t in section_types for t in ("summary", "projects", "list", "custom"))
+    if not has_supplementary:
+        completeness_score -= 20.0
+        missing_sections.append("summary or projects")
+
             
     if not any(t == "experience" for t in section_types):
         format_score -= 30.0
@@ -148,7 +156,7 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
         # 2. Key Skills in Summary (35 pts)
         matched = []
         for s in core_skills:
-            if re.search(r'\b' + re.escape(s.lower()) + r'\b', text):
+            if skill_in_text(s, text):
                 matched.append(s)
 
         skill_pts = min(35.0, (len(matched) / 3.0) * 35.0)
@@ -199,7 +207,7 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
 
             entry_matched = []
             for s in core_skills:
-                if re.search(r'\b' + re.escape(s.lower()) + r'\b', entry_text):
+                if skill_in_text(s, entry_text):
                     entry_matched.append(s)
                     overall_matched.add(s)
 
@@ -243,8 +251,9 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
 
         matched = []
         for s in core_skills:
-            if re.search(r'\b' + re.escape(s.lower()) + r'\b', joined_text):
+            if skill_in_text(s, joined_text):
                 matched.append(s)
+
 
         if core_skills:
             coverage = len(matched) / min(10, len(core_skills))

@@ -128,7 +128,7 @@ export function applyParsedSections(sections: ResumeSection[]): void {
         email: sec.email || '',
         phone: sec.phone || '',
         url: portfolioUrl,
-        summary: '',
+        summary: useBasicDetails.getState().values.summary || '',
         objective: '',
         location: {
           address: '',
@@ -210,20 +210,27 @@ export function applyParsedSections(sections: ResumeSection[]): void {
     }
 
     // Projects → activities.involvements (HTML)
-    if (type === 'projects' && sec.entries) {
-      const bullets = sec.entries.flatMap((entry: any) => {
-        const entryBullets = entry.bullets || [];
-        const header = entry.name || entry.title || '';
-        if (header && entryBullets.length > 0) {
-          return [`<strong>${header}</strong>: ${entryBullets.join('; ')}`];
+    if (type === 'projects') {
+      if (sec.entries && sec.entries.length > 0) {
+        const bullets = sec.entries.flatMap((entry: any) => {
+          const entryBullets = entry.bullets || [];
+          const header = entry.name || entry.title || '';
+          if (header && entryBullets.length > 0) {
+            return [`<strong>${header}</strong>: ${entryBullets.join('; ')}`];
+          }
+          return entryBullets.length > 0 ? entryBullets : header ? [header] : [];
+        });
+        if (bullets.length > 0) {
+          foundProjects = `<ul>${bullets.map((b: string) => `<li>${b}</li>`).join('')}</ul>`;
         }
-        return entryBullets.length > 0 ? entryBullets : header ? [header] : [];
-      });
-      if (bullets.length > 0) {
-        const html = `<ul>${bullets.map((b: string) => `<li>${b}</li>`).join('')}</ul>`;
-        foundProjects = html;
+      } else if (sec.items && sec.items.length > 0) {
+        foundProjects = `<ul>${sec.items.map((b: string) => `<li>${b}</li>`).join('')}</ul>`;
+      } else if (sec.text) {
+        const lines = sec.text.split('\n').filter((l: string) => l.trim().length > 0);
+        foundProjects = `<ul>${lines.map((l: string) => `<li>${l.replace(/^[•\-–·*▪►○\d+\.]\s*/, '').trim()}</li>`).join('')}</ul>`;
       }
     }
+
 
     // Certifications / List sections → activities.achievements (HTML)
     const isCertSec = (sec.name || '').toLowerCase().match(/certif|license|course/i);
