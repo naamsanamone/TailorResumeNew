@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   analyzeResume,
   scoreResume,
@@ -97,11 +97,23 @@ function captureSnapshot() {
   };
 }
 
-const TailorLayout = () => {
+interface TailorLayoutProps {
+  extensionJobContext?: {
+    title: string;
+    company: string;
+    location: string;
+    description: string;
+    jobId: string;
+  } | null;
+  onExtensionContextConsumed?: () => void;
+}
+
+const TailorLayout = ({ extensionJobContext, onExtensionContextConsumed }: TailorLayoutProps = {}) => {
   const [jd, setJd] = useState('');
   const [step, setStep] = useState<Step>('input');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [linkedInContext, setLinkedInContext] = useState<{ title: string; company: string } | null>(null);
 
   // Step 1: Analysis
   const [analysis, setAnalysis] = useState<AnalyzeResponse | null>(null);
@@ -118,6 +130,49 @@ const TailorLayout = () => {
   const [applied, setApplied] = useState(false);
 
   const sectionsRef = useRef<any[]>([]);
+  const extensionConsumed = useRef(false);
+
+  // Auto-fill JD from extension context (props or URL params)
+  useEffect(() => {
+    if (extensionConsumed.current) return;
+
+    // Priority 1: Props from parent
+    if (extensionJobContext?.description) {
+      extensionConsumed.current = true;
+      setJd(extensionJobContext.description);
+      setLinkedInContext({
+        title: extensionJobContext.title,
+        company: extensionJobContext.company,
+      });
+      onExtensionContextConsumed?.();
+      return;
+    }
+
+    // Priority 2: URL search params (from extension opening this tab)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('from') === 'linkedapply') {
+        extensionConsumed.current = true;
+        const jdBase64 = params.get('jd');
+        if (jdBase64) {
+          try {
+            const decoded = decodeURIComponent(escape(atob(jdBase64)));
+            setJd(decoded);
+            setLinkedInContext({
+              title: params.get('title') || '',
+              company: params.get('company') || '',
+            });
+            // Clean URL params without triggering navigation
+            const url = new URL(window.location.href);
+            url.search = '';
+            window.history.replaceState({}, '', url.toString());
+          } catch (e) {
+            console.error('Failed to decode JD from URL:', e);
+          }
+        }
+      }
+    }
+  }, [extensionJobContext, onExtensionContextConsumed]);
 
   // ─── Step 1: Analyze ───
   const handleAnalyze = useCallback(async () => {
@@ -374,6 +429,31 @@ const TailorLayout = () => {
           <p className="text-xs text-slate-400 mb-3">
             Paste a job description to analyze your resume&apos;s ATS compatibility, then tailor section by section.
           </p>
+
+          {/* LinkedIn context banner */}
+          {linkedInContext && (linkedInContext.title || linkedInContext.company) && (
+            <div className="mb-3 p-3 bg-[#0a66c2]/10 border border-[#0a66c2]/30 rounded-xl flex items-start gap-3">
+              <span className="text-lg mt-0.5">🔗</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-[#70b5f9] font-semibold uppercase tracking-wider mb-0.5">
+                  From LinkedApply Pro
+                </p>
+                {linkedInContext.title && (
+                  <p className="text-sm font-semibold text-slate-100 truncate">{linkedInContext.title}</p>
+                )}
+                {linkedInContext.company && (
+                  <p className="text-xs text-slate-400">{linkedInContext.company}</p>
+                )}
+              </div>
+              <button
+                onClick={() => setLinkedInContext(null)}
+                className="text-slate-500 hover:text-slate-300 text-xs cursor-pointer"
+                title="Dismiss"
+              >
+                ✕
+              </button>
+            </div>
+          )}
           <textarea
             value={jd}
             onChange={(e) => setJd(e.target.value)}
