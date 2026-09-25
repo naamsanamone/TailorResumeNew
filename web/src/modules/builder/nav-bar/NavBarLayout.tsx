@@ -181,15 +181,36 @@ const NavBarLayout = () => {
         </NavBarMenu>
         <div className="hidden md:flex">
           <NavBarActions>
-            <StyledButton variant="text" onClick={() => setIsUploadOpen(true)}>
-              Upload Resume
-            </StyledButton>
-            <button
-              onClick={() => useActiveSectionStore.getState().openTailor()}
-              className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-md shadow-indigo-500/25 border border-indigo-400/30 transition-all cursor-pointer flex items-center gap-1.5"
-            >
-              Tailor Resume
-            </button>
+            <div className="flex items-center gap-1.5 p-0.5 rounded-xl bg-slate-900/60 border border-indigo-500/20 shadow-xs">
+              <button
+                onClick={() => setIsUploadOpen(true)}
+                className="bg-[#161c30] hover:bg-[#1d2542] text-slate-200 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-500/20 hover:border-indigo-400/50 shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                Upload Resume
+              </button>
+              <button
+                onClick={() => useActiveSectionStore.getState().openTailor()}
+                className="bg-[#161c30] hover:bg-[#1d2542] text-slate-200 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-500/20 hover:border-indigo-400/50 shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <line x1="4" y1="21" x2="4" y2="14" />
+                  <line x1="4" y1="10" x2="4" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12" y2="3" />
+                  <line x1="20" y1="21" x2="20" y2="16" />
+                  <line x1="20" y1="12" x2="20" y2="3" />
+                  <line x1="1" y1="14" x2="7" y2="14" />
+                  <line x1="9" y1="8" x2="15" y2="8" />
+                  <line x1="17" y1="16" x2="23" y2="16" />
+                </svg>
+                Tailor Resume
+              </button>
+            </div>
             <StyledButton variant="text" onClick={exportResumeData}>
               Export
             </StyledButton>
