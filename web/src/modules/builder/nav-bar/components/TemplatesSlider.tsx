@@ -51,19 +51,23 @@ export const TemplateSlider = () => {
       <Global
         styles={{
           '.splide__arrow svg': {
-            fill: '#000000',
+            fill: '#ffffff',
           },
           '.splide__arrow--prev': {
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+            borderRadius: '8px',
           },
           '.splide__arrow--next': {
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+            borderRadius: '8px',
           },
           '.splide__arrow--prev:disabled': {
             cursor: 'not-allowed',
+            opacity: 0.3,
           },
           '.splide__arrow--next:disabled': {
             cursor: 'not-allowed',
+            opacity: 0.3,
           },
         }}
       />
@@ -105,8 +109,10 @@ const TemplateSlide = ({
   return (
     <li className="splide__slide flex justify-center">
       <div
-        className={`h-[255px] w-[180px] rounded border hover:cursor-pointer overflow-hidden relative ${
-          isActive ? 'border-resume-800' : 'border-resume-200'
+        className={`h-[255px] w-[180px] rounded-xl border hover:cursor-pointer overflow-hidden relative transition-all ${
+          isActive
+            ? 'border-2 border-indigo-500 shadow-lg shadow-indigo-500/40 ring-2 ring-indigo-500/30'
+            : 'border-slate-700/80 hover:border-indigo-400/50'
         }`}
         style={{ width: TILE_W, height: TILE_H }}
         onClick={() => {

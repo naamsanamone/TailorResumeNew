@@ -39,9 +39,9 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
   };
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4">
       {/* Section Title Bar */}
-      <div className="flex items-center justify-between gap-2 pb-3 border-b border-gray-200">
+      <div className="flex items-center justify-between gap-2 pb-3 border-b border-indigo-500/15">
         {isEditingTitle ? (
           <div className="flex items-center gap-2 flex-1">
             <input
@@ -56,11 +56,11 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
                 }
               }}
               autoFocus
-              className="px-2.5 py-1.5 border border-blue-400 rounded-md text-base font-semibold text-gray-800 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-2.5 py-1.5 rounded-md text-sm font-semibold text-white bg-[#161c30] border border-indigo-500/40 flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <button
               onClick={handleTitleSave}
-              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors"
+              className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold rounded-md shadow-sm transition-all cursor-pointer"
             >
               Save
             </button>
@@ -69,20 +69,20 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
                 setTitleInput(section.title);
                 setIsEditingTitle(false);
               }}
-              className="px-2 py-1.5 text-gray-500 hover:text-gray-700 text-xs"
+              className="px-2 py-1.5 text-slate-400 hover:text-slate-200 text-xs cursor-pointer"
             >
               Cancel
             </button>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-base font-semibold text-gray-800">{section.title}</span>
+            <span className="text-base font-semibold text-slate-100">{section.title}</span>
             <button
               onClick={() => {
                 setTitleInput(section.title);
                 setIsEditingTitle(true);
               }}
-              className="text-xs text-blue-600 hover:text-blue-800 font-medium px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors"
+              className="text-xs text-indigo-400 hover:text-cyan-300 font-medium px-2 py-1 rounded bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 transition-all cursor-pointer"
               title="Rename Section"
             >
               Rename
@@ -92,7 +92,7 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
 
         <button
           onClick={() => setShowDeleteConfirm(true)}
-          className="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors shrink-0"
+          className="text-xs text-red-400 hover:text-red-300 font-medium px-2.5 py-1 rounded-md bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors shrink-0 cursor-pointer"
         >
           Delete Section
         </button>
@@ -100,19 +100,19 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 space-y-2">
-          <p className="font-medium">Delete &ldquo;{section.title}&rdquo; section?</p>
-          <p className="text-xs text-red-600">This will remove this section from the resume and template.</p>
+        <div className="p-3 bg-red-950/40 border border-red-500/30 rounded-lg text-sm text-red-200 space-y-2">
+          <p className="font-semibold text-white">Delete &ldquo;{section.title}&rdquo; section?</p>
+          <p className="text-xs text-red-300">This will remove this section from the resume and template.</p>
           <div className="flex gap-2 pt-1">
             <button
               onClick={handleDelete}
-              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-colors"
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded transition-colors cursor-pointer"
             >
               Yes, Delete
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-medium rounded transition-colors"
+              className="px-3 py-1 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 text-xs font-medium rounded transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -122,8 +122,8 @@ const CustomSectionLayout: React.FC<CustomSectionLayoutProps> = ({ sectionId, on
 
       {/* Rich Text Editor */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">
-          Add bullet points or details for this section.
+        <h4 className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
+          Section Content
         </h4>
         <RichtextEditor
           label={section.title}

@@ -1,29 +1,43 @@
 @theme {
-  /* colors */
-  --color-resume-10: #f3f8ff;
-  --color-resume-50: #e7eefa;
-  --color-resume-100: #c7d6e4;
-  --color-resume-200: #a8b9cc;
-  --color-resume-300: #889db3;
-  --color-resume-400: #7188a1;
-  --color-resume-500: #59748f;
-  --color-resume-600: #4c667e;
-  --color-resume-700: #3c5268;
-  --color-resume-800: #2e4052;
-  --color-resume-900: #1c2c3a;
-  --color-custom-grey: #e2e7ed;
-  --color-custom-grey100: #e5e5e5;
+  /* LinkedApply Pro Brand Tokens */
+  --color-brand-primary: #6366f1;
+  --color-brand-primary-light: #818cf8;
+  --color-brand-primary-dark: #4f46e5;
+  --color-brand-accent: #06b6d4;
+  --color-brand-accent-light: #22d3ee;
+
+  --color-brand-bg-primary: #0b0f19;
+  --color-brand-bg-sidebar: #0f1424;
+  --color-brand-bg-card: #161c30;
+  --color-brand-bg-card-hover: #1c2440;
+  --color-brand-border: rgba(99, 102, 241, 0.16);
+  --color-brand-border-hover: rgba(99, 102, 241, 0.45);
+
+  /* Resume Theme Tokens aligned with Brand */
+  --color-resume-10: #f8fafc;
+  --color-resume-50: #0f1424;
+  --color-resume-100: #e2e8f0;
+  --color-resume-200: #cbd5e1;
+  --color-resume-300: #a5b4fc;
+  --color-resume-400: #818cf8;
+  --color-resume-500: #6366f1;
+  --color-resume-600: #4f46e5;
+  --color-resume-700: #1e293b;
+  --color-resume-800: #0c101d;
+  --color-resume-900: #070a12;
+  --color-custom-grey: #1a2236;
+  --color-custom-grey100: #0f1424;
 
   /* border radius */
-  --border-radius-md: 4px;
+  --border-radius-md: 8px;
 
   /* box shadow */
-  --shadow-level-4px-0.25: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-level-4px-0.25: 0px 4px 4px rgba(0, 0, 0, 0.35);
   --shadow-level-8dp:
-    0px 8px 10px rgba(0, 0, 0, 0.14), 0px 3px 14px rgba(0, 0, 0, 0.12),
-    0px 5px 5px rgba(0, 0, 0, 0.2);
+    0px 8px 10px rgba(0, 0, 0, 0.3), 0px 3px 14px rgba(0, 0, 0, 0.25),
+    0px 5px 5px rgba(0, 0, 0, 0.35);
   --shadow-level-4dp:
-    0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12),
-    0px 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-level-hard: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    0px 4px 5px rgba(0, 0, 0, 0.3), 0px 1px 10px rgba(0, 0, 0, 0.25),
+    0px 2px 4px rgba(0, 0, 0, 0.35);
+  --shadow-level-hard: rgba(0, 0, 0, 0.4) 0px 10px 20px, rgba(0, 0, 0, 0.3) 0px 6px 6px;
 }

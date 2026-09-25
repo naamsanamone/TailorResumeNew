@@ -31,13 +31,13 @@ const ScoreBar = ({ score, label, small }: { score: number; label?: string; smal
   <div className={small ? 'mb-1' : 'mb-2'}>
     {label && (
       <div className={`flex justify-between ${small ? 'text-xs' : 'text-sm'} mb-0.5`}>
-        <span className="text-gray-600">{label}</span>
+        <span className="text-slate-300 font-medium">{label}</span>
         <span className="font-semibold" style={{ color: scoreColor(score) }}>
           {Math.round(score)}%
         </span>
       </div>
     )}
-    <div className={`w-full bg-gray-200 rounded-full ${small ? 'h-1.5' : 'h-2'}`}>
+    <div className={`w-full bg-slate-800/80 rounded-full ${small ? 'h-1.5' : 'h-2'} overflow-hidden border border-white/5`}>
       <div
         className={`${small ? 'h-1.5' : 'h-2'} rounded-full transition-all duration-500`}
         style={{ width: `${Math.min(Math.max(score, 0), 100)}%`, backgroundColor: scoreColor(score) }}
@@ -48,14 +48,14 @@ const ScoreBar = ({ score, label, small }: { score: number; label?: string; smal
 
 const SkillBadges = ({ skills, type }: { skills: string[]; type: 'matched' | 'missing' | 'partial' }) => {
   const colors = {
-    matched: 'bg-green-100 text-green-700',
-    missing: 'bg-red-100 text-red-600',
-    partial: 'bg-amber-100 text-amber-700',
+    matched: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
+    missing: 'bg-red-500/15 text-red-300 border border-red-500/30',
+    partial: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
   };
   return (
     <div className="flex flex-wrap gap-1">
       {skills.map((s, i) => (
-        <span key={i} className={`px-2 py-0.5 rounded text-xs ${colors[type]}`}>
+        <span key={i} className={`px-2 py-0.5 rounded-md text-[11px] font-medium ${colors[type]}`}>
           {s}
         </span>
       ))}
@@ -370,22 +370,22 @@ const TailorLayout = () => {
       {/* Step 1: Input */}
       {step === 'input' && (
         <>
-          <h2 className="text-2xl font-bold mb-3">Tailor Resume</h2>
-          <p className="text-sm text-gray-600 mb-3">
-            Paste a job description to analyze your resume's ATS compatibility, then tailor section by section.
+          <h2 className="text-xl font-bold text-slate-100 mb-2">Tailor Resume</h2>
+          <p className="text-xs text-slate-400 mb-3">
+            Paste a job description to analyze your resume&apos;s ATS compatibility, then tailor section by section.
           </p>
           <textarea
             value={jd}
             onChange={(e) => setJd(e.target.value)}
             placeholder="Paste the full job description here..."
             rows={8}
-            className="w-full p-3 border border-gray-300 rounded-md text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 border border-indigo-500/25 bg-[#161c30] text-slate-100 placeholder-slate-500 rounded-xl text-sm resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"
             disabled={loading}
           />
           <button
             onClick={handleAnalyze}
             disabled={loading || jd.trim().length < 50}
-            className="w-full mt-3 py-2.5 px-4 bg-resume-800 text-white rounded-md font-semibold text-sm hover:bg-resume-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full mt-3 py-2.5 px-4 bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-xl font-semibold text-xs tracking-wide uppercase disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-500/25 cursor-pointer"
           >
             {loading ? '⏳ Analyzing...' : '🔍 Analyze Match'}
           </button>
@@ -396,16 +396,16 @@ const TailorLayout = () => {
       {step === 'analysis' && analysis && (
         <>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xl font-bold">📊 Analysis</h2>
-            <button onClick={startOver} className="text-xs text-blue-600 hover:underline">
+            <h2 className="text-xl font-bold text-slate-100">📊 Analysis</h2>
+            <button onClick={startOver} className="text-xs text-indigo-400 hover:text-cyan-300 font-semibold cursor-pointer">
               ← New JD
             </button>
           </div>
 
           {/* Overall Score */}
-          <div className="p-4 bg-white rounded-lg shadow-sm border mb-4">
+          <div className="p-4 bg-[#161c30] border border-indigo-500/25 rounded-xl shadow-md mb-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Overall ATS Score</span>
+              <span className="text-sm font-semibold text-slate-200">Overall ATS Score</span>
               <span
                 className="text-3xl font-bold transition-colors duration-300"
                 style={{ color: scoreColor(overallScore) }}
@@ -414,7 +414,7 @@ const TailorLayout = () => {
               </span>
             </div>
             <ScoreBar score={overallScore} />
-            <div className="grid grid-cols-2 gap-1 mt-2 text-xs text-gray-500">
+            <div className="grid grid-cols-2 gap-1 mt-2 text-xs text-slate-400">
               <div>Keywords: {Math.round(analysis.breakdown.keyword_score)}%</div>
               <div>Semantic: {Math.round(analysis.breakdown.semantic_score)}%</div>
               <div>Format: {Math.round(analysis.breakdown.format_score)}%</div>
@@ -424,9 +424,9 @@ const TailorLayout = () => {
 
           {/* JD Info */}
           {analysis.jd_analysis?.jobTitle && (
-            <div className="p-2.5 bg-purple-50 border border-purple-200 rounded text-xs mb-4">
-              <span className="font-semibold text-purple-800">Target Role:</span>{' '}
-              <span className="text-purple-700 font-medium">
+            <div className="p-2.5 bg-indigo-950/40 border border-indigo-500/30 rounded-lg text-xs mb-4">
+              <span className="font-semibold text-indigo-300">Target Role:</span>{' '}
+              <span className="text-indigo-200 font-medium">
                 {analysis.jd_analysis.jobTitle}
                 {analysis.jd_analysis.company && ` at ${analysis.jd_analysis.company}`}
                 {analysis.jd_analysis.seniority && ` (${analysis.jd_analysis.seniority})`}
@@ -437,24 +437,24 @@ const TailorLayout = () => {
           {/* Skills Overview */}
           <div className="space-y-2 mb-4">
             {analysis.matched_skills.length > 0 && (
-              <div className="p-2.5 bg-green-50 border border-green-200 rounded">
-                <div className="text-xs font-semibold text-green-800 mb-1">
+              <div className="p-2.5 bg-emerald-950/30 border border-emerald-500/30 rounded-lg">
+                <div className="text-xs font-semibold text-emerald-300 mb-1">
                   ✅ Matched ({analysis.matched_skills.length})
                 </div>
                 <SkillBadges skills={analysis.matched_skills.map((s) => s.skill)} type="matched" />
               </div>
             )}
             {analysis.missing_skills.length > 0 && (
-              <div className="p-2.5 bg-red-50 border border-red-200 rounded">
-                <div className="text-xs font-semibold text-red-700 mb-1">
+              <div className="p-2.5 bg-red-950/30 border border-red-500/30 rounded-lg">
+                <div className="text-xs font-semibold text-red-300 mb-1">
                   ❌ Missing ({analysis.missing_skills.length})
                 </div>
                 <SkillBadges skills={analysis.missing_skills} type="missing" />
               </div>
             )}
             {analysis.partial_matches.length > 0 && (
-              <div className="p-2.5 bg-amber-50 border border-amber-200 rounded">
-                <div className="text-xs font-semibold text-amber-700 mb-1">
+              <div className="p-2.5 bg-amber-950/30 border border-amber-500/30 rounded-lg">
+                <div className="text-xs font-semibold text-amber-300 mb-1">
                   ⚠️ Partial ({analysis.partial_matches.length})
                 </div>
                 <SkillBadges skills={analysis.partial_matches.map((s) => s.skill)} type="partial" />
@@ -463,13 +463,13 @@ const TailorLayout = () => {
           </div>
 
           {/* Section-by-Section Scores + Tailor Buttons */}
-          <h3 className="text-sm font-bold text-gray-700 mb-2">Section Scores & Tailoring</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Section Scores & Tailoring</h3>
 
           {/* Summary Section */}
           {analysis.section_scores.summary && (
-            <div className="p-3 bg-white border rounded-lg mb-3 shadow-xs">
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold">📝 Summary</span>
+                <span className="text-sm font-semibold text-slate-100">📝 Summary</span>
                 <span
                   className="text-sm font-bold"
                   style={{ color: scoreColor(analysis.section_scores.summary.score) }}
@@ -479,23 +479,23 @@ const TailorLayout = () => {
               </div>
               <ScoreBar score={analysis.section_scores.summary.score} small />
               {!tailoredSummary && analysis.section_scores.summary.score < 85 && analysis.section_scores.summary.recommendation && (
-                <p className="text-xs text-gray-500 mb-2">{analysis.section_scores.summary.recommendation}</p>
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.summary.recommendation}</p>
               )}
               {tailoredSummary ? (
-                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs">
+                <div className="mt-2 p-2.5 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold text-green-700">✅ Tailored</span>
-                    <span className="text-green-700 font-bold">
+                    <span className="font-semibold text-emerald-300">✅ Tailored</span>
+                    <span className="text-emerald-300 font-bold">
                       {Math.round(tailoredSummary.before_score)}% → {Math.round(tailoredSummary.after_score)}%
                     </span>
                   </div>
-                  <p className="text-gray-600 line-clamp-3 leading-relaxed">{tailoredSummary.tailored_summary}</p>
+                  <p className="text-slate-300 line-clamp-3 leading-relaxed">{tailoredSummary.tailored_summary}</p>
                 </div>
               ) : (
                 <button
                   onClick={handleTailorSummary}
                   disabled={tailoringSection === 'summary'}
-                  className="w-full py-1.5 px-3 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  className="w-full mt-2 py-2 px-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
                 >
                   {tailoringSection === 'summary' ? '⏳ Tailoring Summary...' : 'Tailor Summary'}
                 </button>
@@ -505,9 +505,9 @@ const TailorLayout = () => {
 
           {/* Experience Section */}
           {analysis.section_scores.experience && (
-            <div className="p-3 bg-white border rounded-lg mb-3 shadow-xs">
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold">💼 Experience</span>
+                <span className="text-sm font-semibold text-slate-100">💼 Experience</span>
                 <span
                   className="text-sm font-bold"
                   style={{ color: scoreColor(analysis.section_scores.experience.score) }}
@@ -517,14 +517,14 @@ const TailorLayout = () => {
               </div>
               <ScoreBar score={analysis.section_scores.experience.score} small />
               {analysis.section_scores.experience.score < 80 && analysis.section_scores.experience.recommendation && (
-                <p className="text-xs text-gray-500 mb-2">{analysis.section_scores.experience.recommendation}</p>
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.experience.recommendation}</p>
               )}
 
               {/* Per-entry */}
               {(analysis.section_scores.experience as any).entries?.map((entry: any, i: number) => (
-                <div key={i} className="ml-2 mt-2 p-2 border-l-2 border-gray-200 bg-gray-50/50 rounded-r">
+                <div key={i} className="ml-2 mt-2 p-2.5 border-l-2 border-indigo-500/40 bg-[#121727]/90 rounded-r-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-800">
+                    <span className="text-xs font-medium text-slate-200">
                       {entry.title || entry.company || `Entry ${i + 1}`}
                     </span>
                     <span className="text-xs font-bold" style={{ color: scoreColor(entry.score) }}>
@@ -533,10 +533,10 @@ const TailorLayout = () => {
                   </div>
                   <ScoreBar score={entry.score} small />
                   {tailoredBullets[i] ? (
-                    <div className="mt-1 p-1.5 bg-green-50 border border-green-200 rounded text-xs">
+                    <div className="mt-1 p-1.5 bg-emerald-950/40 border border-emerald-500/30 rounded text-xs">
                       <div className="flex justify-between items-center">
-                        <span className="font-semibold text-green-700">✅ Tailored</span>
-                        <span className="text-green-700 font-bold">
+                        <span className="font-semibold text-emerald-300">✅ Tailored</span>
+                        <span className="text-emerald-300 font-bold">
                           {Math.round(tailoredBullets[i].before_score)}% → {Math.round(tailoredBullets[i].after_score)}%
                         </span>
                       </div>
@@ -545,7 +545,7 @@ const TailorLayout = () => {
                     <button
                       onClick={() => handleTailorBullets(i)}
                       disabled={tailoringSection === `bullets-${i}`}
-                      className="w-full mt-1 py-1 px-2 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                      className="w-full mt-2 py-1.5 px-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-md text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
                     >
                       {tailoringSection === `bullets-${i}` ? '⏳ Optimizing Bullets...' : 'Tailor Bullets'}
                     </button>
@@ -557,9 +557,9 @@ const TailorLayout = () => {
 
           {/* Skills Section */}
           {analysis.section_scores.skills && (
-            <div className="p-3 bg-white border rounded-lg mb-3 shadow-xs">
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-semibold">🛠️ Skills</span>
+                <span className="text-sm font-semibold text-slate-100">🛠️ Skills</span>
                 <span
                   className="text-sm font-bold"
                   style={{ color: scoreColor(analysis.section_scores.skills.score) }}
@@ -569,13 +569,13 @@ const TailorLayout = () => {
               </div>
               <ScoreBar score={analysis.section_scores.skills.score} small />
               {!tailoredSkills && analysis.section_scores.skills.score < 85 && analysis.section_scores.skills.recommendation && (
-                <p className="text-xs text-gray-500 mb-2">{analysis.section_scores.skills.recommendation}</p>
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.skills.recommendation}</p>
               )}
               {tailoredSkills ? (
-                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs">
+                <div className="mt-2 p-2.5 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold text-green-700">✅ Skills Categorized & Added</span>
-                    <span className="text-green-700 font-bold">
+                    <span className="font-semibold text-emerald-300">✅ Skills Categorized & Added</span>
+                    <span className="text-emerald-300 font-bold">
                       {Math.round(tailoredSkills.before_score)}% → {Math.round(tailoredSkills.after_score)}%
                     </span>
                   </div>
@@ -589,7 +589,7 @@ const TailorLayout = () => {
                 <button
                   onClick={handleTailorSkills}
                   disabled={tailoringSection === 'skills'}
-                  className="w-full py-1.5 px-3 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  className="w-full mt-2 py-2 px-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
                 >
                   {tailoringSection === 'skills' ? '⏳ Categorizing & Adding...' : 'Tailor & Add Skills'}
                 </button>
@@ -599,11 +599,11 @@ const TailorLayout = () => {
 
           {/* Recommendations & 95%+ Target */}
           {overallScore >= 85 ? (
-            <div className="p-3 bg-gradient-to-r from-emerald-50 to-green-50 border border-green-200 rounded mb-3">
-              <div className="text-xs font-bold text-green-900 mb-1 flex items-center gap-1">
+            <div className="p-3 bg-gradient-to-r from-emerald-950/60 to-emerald-900/40 border border-emerald-500/30 rounded-xl mb-3">
+              <div className="text-xs font-bold text-emerald-300 mb-1 flex items-center gap-1">
                 🚀 How to reach 95%+ ATS Score
               </div>
-              <ul className="text-xs text-green-800 space-y-1">
+              <ul className="text-xs text-emerald-200/90 space-y-1">
                 {analysis.missing_skills.length > 0 ? (
                   <li>• Weave remaining keywords into your bullets: <strong>{analysis.missing_skills.slice(0, 3).join(', ')}</strong></li>
                 ) : (
@@ -614,9 +614,9 @@ const TailorLayout = () => {
             </div>
           ) : (
             analysis.recommendations.length > 0 && (
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-3">
-                <div className="text-xs font-semibold text-blue-800 mb-1">💡 Recommendations</div>
-                <ul className="text-xs text-blue-700 space-y-0.5">
+              <div className="p-3 bg-indigo-950/50 border border-indigo-500/30 rounded-xl mb-3">
+                <div className="text-xs font-semibold text-indigo-300 mb-1">💡 Recommendations</div>
+                <ul className="text-xs text-indigo-200/90 space-y-0.5">
                   {analysis.recommendations.map((r, i) => (
                     <li key={i}>• {r}</li>
                   ))}
@@ -631,18 +631,18 @@ const TailorLayout = () => {
               {!applied ? (
                 <button
                   onClick={applyAll}
-                  className="w-full py-2.5 px-4 bg-green-600 text-white rounded-md font-semibold text-sm hover:bg-green-700 shadow-xs transition-colors"
+                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-semibold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer"
                 >
                   ✅ Apply All Changes
                 </button>
               ) : (
                 <>
-                  <div className="p-2.5 bg-green-50 border border-green-200 rounded text-xs text-green-700 text-center font-medium">
+                  <div className="p-2.5 bg-emerald-950/50 border border-emerald-500/40 rounded-lg text-xs text-emerald-300 text-center font-semibold">
                     ✅ Changes applied! Live resume updated.
                   </div>
                   <button
                     onClick={revertAll}
-                    className="w-full py-2 px-4 bg-amber-500 text-white rounded-md font-semibold text-sm hover:bg-amber-600 shadow-xs transition-colors"
+                    className="w-full py-2 px-4 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-semibold text-xs transition-all cursor-pointer"
                   >
                     ↩️ Revert All Changes
                   </button>
@@ -655,7 +655,7 @@ const TailorLayout = () => {
 
       {/* Error display */}
       {error && (
-        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">{error}</div>
+        <div className="mt-3 p-3 bg-red-950/50 border border-red-500/40 rounded-xl text-xs text-red-300">{error}</div>
       )}
     </div>
   );

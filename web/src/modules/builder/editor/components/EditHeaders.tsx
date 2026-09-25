@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Divider } from '@mui/material';
 import { motion } from 'framer-motion';
 import { headers } from '@/helpers/constants/editor-data';
 import HeaderTitle from '../atoms/HeaderTitle';
@@ -37,40 +36,55 @@ const EditHeaders = ({ onLinkClick }: { onLinkClick: (link: string) => void }) =
   };
 
   return (
-    <motion.div initial={animation.initial} animate={animation.animate}>
+    <motion.div initial={animation.initial} animate={animation.animate} className="space-y-2">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-indigo-500/15">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Resume Sections
+        </span>
+        <span className="text-[11px] font-semibold text-indigo-400/90 bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-500/25">
+          {Object.keys(headers).length + customSections.length} sections
+        </span>
+      </div>
+
       {/* Standard Sections */}
       {Object.entries(headers).map(([link, { title }]) => {
         const displayTitle = sectionTitles[link] || title;
         return (
-          <a onClick={() => onLinkClick(link)} key={link} className="block group">
+          <div
+            onClick={() => onLinkClick(link)}
+            key={link}
+            className="bg-[#161c30] hover:bg-[#1d2542] border border-indigo-500/15 hover:border-indigo-400/40 rounded-xl px-4 py-3 cursor-pointer transition-all duration-150 flex items-center justify-between group shadow-sm hover:shadow-md hover:shadow-indigo-500/10"
+          >
             <HeaderTitle title={displayTitle} />
-            <Divider />
-          </a>
+          </div>
         );
       })}
 
       {/* User-Defined Custom Sections */}
       {customSections.map((cs) => (
-        <a onClick={() => onLinkClick(cs.id)} key={cs.id} className="block group">
+        <div
+          onClick={() => onLinkClick(cs.id)}
+          key={cs.id}
+          className="bg-[#161c30] hover:bg-[#1d2542] border border-indigo-500/15 hover:border-indigo-400/40 rounded-xl px-4 py-3 cursor-pointer transition-all duration-150 flex items-center justify-between group shadow-sm hover:shadow-md hover:shadow-indigo-500/10"
+        >
           <HeaderTitle title={cs.title} />
-          <Divider />
-        </a>
+        </div>
       ))}
 
       {/* Add Custom Section Button */}
-      <div className="mt-4">
+      <div className="pt-2">
         {!showAddModal ? (
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-full py-2.5 px-3 border-2 border-dashed border-blue-400 hover:border-blue-600 text-blue-600 hover:text-blue-700 hover:bg-blue-50/60 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full py-3 px-4 border-2 border-dashed border-indigo-500/30 hover:border-cyan-400/60 text-indigo-400 hover:text-cyan-300 hover:bg-indigo-950/30 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span className="text-lg leading-none font-bold">+</span>
             <span>Add Custom Section</span>
           </button>
         ) : (
-          <div className="p-3 bg-white border border-blue-200 rounded-lg shadow-sm space-y-3 animate-[fadeIn_.2s]">
+          <div className="p-4 bg-[#161c30] border border-indigo-500/30 rounded-xl shadow-lg space-y-3 animate-[fadeIn_.2s]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                 New Section Name
               </span>
               <button
@@ -78,7 +92,7 @@ const EditHeaders = ({ onLinkClick }: { onLinkClick: (link: string) => void }) =
                   setShowAddModal(false);
                   setNewSectionTitle('');
                 }}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold"
+                className="text-slate-400 hover:text-white text-base font-bold"
               >
                 &times;
               </button>
@@ -94,19 +108,18 @@ const EditHeaders = ({ onLinkClick }: { onLinkClick: (link: string) => void }) =
               }}
               placeholder="e.g. Publications, Languages"
               autoFocus
-              className="w-full px-2.5 py-1.5 border border-gray-300 rounded-md text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 bg-[#0f1424] border border-indigo-500/30 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
 
-            {/* Quick Suggestions */}
             <div>
-              <span className="text-[11px] text-gray-400 block mb-1">Suggestions:</span>
-              <div className="flex flex-wrap gap-1">
+              <span className="text-[11px] text-slate-400 block mb-1.5">Suggestions:</span>
+              <div className="flex flex-wrap gap-1.5">
                 {SUGGESTED_SECTIONS.map((suggestion) => (
                   <button
                     key={suggestion}
                     type="button"
                     onClick={() => handleCreateSection(suggestion)}
-                    className="px-2 py-0.5 bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-gray-600 rounded text-xs transition-colors"
+                    className="px-2.5 py-1 bg-[#1c2440] hover:bg-indigo-600/30 hover:text-cyan-300 text-slate-300 border border-indigo-500/20 rounded-md text-xs transition-colors"
                   >
                     {suggestion}
                   </button>
@@ -118,7 +131,7 @@ const EditHeaders = ({ onLinkClick }: { onLinkClick: (link: string) => void }) =
               <button
                 onClick={() => handleCreateSection()}
                 disabled={!newSectionTitle.trim()}
-                className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white text-xs font-semibold rounded-md transition-colors"
+                className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm shadow-indigo-500/20"
               >
                 Create Section
               </button>
@@ -127,7 +140,7 @@ const EditHeaders = ({ onLinkClick }: { onLinkClick: (link: string) => void }) =
                   setShowAddModal(false);
                   setNewSectionTitle('');
                 }}
-                className="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-xs font-medium"
+                className="px-3 py-2 text-slate-400 hover:text-slate-200 text-xs font-medium"
               >
                 Cancel
               </button>

@@ -1,45 +1,57 @@
 .editor_wrapper {
-  background: rgb(231 235 242);
-  border-radius: 5px;
+  background: #161c30;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .editor_wrapper :global(.jodit-container) {
   position: relative;
   border: none;
+  background-color: transparent !important;
 }
 
 .editor_wrapper :global(.jodit-toolbar__box) {
   position: absolute;
   bottom: 0;
   width: 100%;
-  border-radius: 0px 0px 4px 4px;
-  border-inline: 1px solid #dadada;
-  background-color: white;
+  border-radius: 0px 0px 8px 8px;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
+  border-inline: none;
+  background-color: #121727;
+}
+
+.editor_wrapper :global(.jodit-toolbar-button__button) {
+  color: #94a3b8 !important;
+  fill: #94a3b8 !important;
+}
+
+.editor_wrapper :global(.jodit-toolbar-button__button:hover) {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  background-color: rgba(99, 102, 241, 0.2) !important;
 }
 
 .editor_wrapper :global(.jodit-workplace) {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 1.4375em;
+  font-size: 14px;
+  line-height: 1.5;
   letter-spacing: 0.00938em;
-  color: rgba(0, 0, 0, 0.87);
+  color: #f8fafc;
   box-sizing: border-box;
   position: relative;
   cursor: text;
   display: inline-flex;
   align-items: center;
   width: 100%;
-  position: relative;
-  background-color: rgb(231 235 242) !important;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  background-color: #161c30 !important;
 }
 
 .editor_wrapper :global(.jodit-wysiwyg) {
-  /* background-color: rgba(0, 0, 0, 0.06); */
-  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-  padding: 0px 16px 8px !important;
+  color: #f8fafc !important;
+  background-color: #161c30 !important;
+  padding: 8px 16px 8px !important;
 }
 
 .editor_wrapper :global(.jodit-placeholder) {

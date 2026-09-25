@@ -49,15 +49,27 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
 
   return (
     <motion.div initial={animation.initial} animate={animation.animate}>
-      <div className="mb-6 mt-4">
-        <div className="flex items-center justify-between">
+      <div className="mb-6 mt-2">
+        <div className="flex items-center justify-between pb-3 border-b border-indigo-500/15">
           <a
-            className="flex items-center cursor-pointer group"
+            className="flex items-center cursor-pointer group gap-2"
             onClick={() => onLinkClick('')}
           >
-            <Image src="/icons/left-arrow.svg" alt="back" width={12} height={16} />
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 group-hover:border-cyan-400/50 group-hover:bg-indigo-500/20 flex items-center justify-center transition-all">
+              <svg
+                className="w-4 h-4 text-indigo-400 group-hover:text-cyan-300 transition-colors"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </div>
             {!isEditing && (
-              <span className="pl-2 ml-2 text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <span className="text-xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors tracking-tight">
                 {currentTitle}
               </span>
             )}
@@ -67,7 +79,7 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsEditing(true)}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors"
+                className="text-xs text-indigo-400 hover:text-cyan-300 font-medium px-2.5 py-1 rounded-md bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 transition-all cursor-pointer"
                 title="Rename section"
               >
                 Rename
@@ -75,7 +87,7 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
               {isCustomTitle && (
                 <button
                   onClick={handleReset}
-                  className="text-xs text-gray-400 hover:text-gray-600 font-medium px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors"
+                  className="text-xs text-slate-400 hover:text-slate-200 font-medium px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer"
                   title="Reset to default title"
                 >
                   Reset
@@ -87,7 +99,7 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
 
         {/* Inline Title Editor */}
         {isEditing && (
-          <div className="flex items-center gap-2 mt-2 pl-5">
+          <div className="flex items-center gap-2 mt-3 p-2 bg-[#161c30] rounded-lg border border-indigo-500/30">
             <input
               type="text"
               value={editedTitle}
@@ -97,11 +109,11 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
                 if (e.key === 'Escape') setIsEditing(false);
               }}
               autoFocus
-              className="px-2.5 py-1 border border-blue-400 rounded-md text-base font-semibold text-gray-900 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="px-2.5 py-1.5 rounded-md text-sm font-semibold text-white bg-[#0f1424] border border-indigo-500/40 flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <button
               onClick={handleSave}
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors"
+              className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold rounded-md shadow-sm transition-all cursor-pointer"
             >
               Save
             </button>
@@ -110,7 +122,7 @@ const EditSection = ({ section, sectionKey, onLinkClick }: IEditSection) => {
                 setEditedTitle(currentTitle);
                 setIsEditing(false);
               }}
-              className="px-2 py-1 text-gray-500 hover:text-gray-700 text-xs"
+              className="px-2 py-1.5 text-slate-400 hover:text-slate-200 text-xs cursor-pointer"
             >
               Cancel
             </button>

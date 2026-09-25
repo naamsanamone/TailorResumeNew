@@ -20,9 +20,13 @@ const BasicHeader = ({
           label={tabs[tab].label}
           value={tab}
           sx={{
-            color: 'rgb(46 64 82)',
+            color: '#94a3b8',
+            '&.Mui-selected': {
+              color: '#818cf8',
+              fontWeight: 700,
+            },
             textTransform: 'none',
-            fontSize: '1rem',
+            fontSize: '0.95rem',
           }}
         />
       ))}

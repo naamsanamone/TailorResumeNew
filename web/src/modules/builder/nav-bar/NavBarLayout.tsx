@@ -153,11 +153,25 @@ const NavBarLayout = () => {
   }, []);
 
   return (
-    <nav className="h-14 w-full bg-resume-800 relative flex py-2.5 pl-2 md:pl-5 pr-1 nd:pr-4 items-center shadow-level-8dp z-20 print:hidden">
-      <Link href="/">
-        <Image src={'/icons/resume-icon.png'} alt="logo" height="36" width="36" />
+    <nav className="h-14 w-full bg-[#0c101d] border-b border-indigo-500/20 relative flex py-2.5 pl-2 md:pl-5 pr-1 md:pr-4 items-center shadow-lg shadow-black/30 z-20 print:hidden">
+      <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+        <Image
+          src="/icons/linkedapply-logo.png"
+          alt="LinkedApply Pro"
+          height={34}
+          width={34}
+          className="rounded-xl shadow-md ring-1 ring-white/10 group-hover:scale-105 transition-transform"
+        />
+        <div className="hidden sm:flex items-center gap-1.5 select-none">
+          <span className="font-extrabold text-base tracking-tight text-white">
+            LinkedApply
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-sm shadow-indigo-500/30">
+            PRO
+          </span>
+        </div>
       </Link>
-      <div className="flex-auto flex justify-between items-center xs:ml-3 md:ml-5">
+      <div className="flex-auto flex justify-between items-center xs:ml-3 md:ml-6">
         <NavBarMenu>
           <NavMenuItem
             caption={`Templates (${TOTAL_TEMPLATES_AVAILABLE})`}
@@ -170,12 +184,12 @@ const NavBarLayout = () => {
             <StyledButton variant="text" onClick={() => setIsUploadOpen(true)}>
               Upload Resume
             </StyledButton>
-            <StyledButton
-              variant="text"
+            <button
               onClick={() => useActiveSectionStore.getState().openTailor()}
+              className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-md shadow-indigo-500/25 border border-indigo-400/30 transition-all cursor-pointer flex items-center gap-1.5"
             >
               Tailor Resume
-            </StyledButton>
+            </button>
             <StyledButton variant="text" onClick={exportResumeData}>
               Export
             </StyledButton>

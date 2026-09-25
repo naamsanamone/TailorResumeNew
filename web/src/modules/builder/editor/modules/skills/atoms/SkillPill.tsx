@@ -50,7 +50,7 @@ const SkillPill = ({
       key={name}
     >
       <div
-        className="bg-custom-grey flex items-center pl-4 pr-2 py-2 rounded-full text-sm cursor-default"
+        className="bg-[#1a2236] border border-indigo-500/20 hover:border-indigo-500/40 flex items-center pl-3.5 pr-2 py-1.5 rounded-full text-xs text-slate-100 cursor-default transition-all shadow-xs"
         data-testid="skill-pill"
         style={style}
         onMouseEnter={() => {
@@ -62,34 +62,47 @@ const SkillPill = ({
         ref={setNodeRef}
         {...attributes}
       >
-        <div className="flex items-center min-w-max" {...listeners}>
-          <Image
-            src="/icons/equals.svg"
-            width={16}
-            height={6}
-            alt="close"
-            className="cursor-grab"
-          />
+        <div className="flex items-center min-w-max text-slate-400 hover:text-slate-200 cursor-grab" {...listeners}>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
         </div>
-        <span className="flex-1 ml-2 cursor-grab" data-testid="skill-title" {...listeners}>
+        <span className="flex-1 ml-2 cursor-grab font-medium" data-testid="skill-title" {...listeners}>
           {name}
         </span>
-        {showLevel && !showEdit && <span className="ml-2">{level}</span>}
+        {showLevel && !showEdit && (
+          <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold">
+            {level}
+          </span>
+        )}
         {showEdit && (
           <motion.button
             initial={animationEditIcon.initial}
             animate={animationEditIcon.animate}
             transition={animationEditIcon.transition}
             onClick={() => onEdit({ name, level, index })}
+            className="p-1 rounded text-slate-400 hover:text-indigo-400 hover:bg-white/5 transition-colors cursor-pointer"
+            title="Edit skill"
           >
-            <Image src="/icons/edit.svg" width={16} height={16} alt="edit" />
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
           </motion.button>
         )}
         <button
-          className="ml-2 min-w-max flex items-center deleteButton"
+          className="ml-1 p-1 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
           onClick={() => onDelete(index)}
+          title="Delete skill"
         >
-          <Image src="/icons/close.svg" width={16} height={16} alt="close" />
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
     </motion.div>

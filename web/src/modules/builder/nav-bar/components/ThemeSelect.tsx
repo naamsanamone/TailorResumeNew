@@ -13,8 +13,8 @@ export const ThemeSelect = () => {
   };
 
   return (
-    <div className={`h-auto md:w-[475px] bg-white flex flex-col px-9 py-7 shadow-2xl`}>
-      <span className="text-resume-800 font-bold text-sm md:text-lg mb-2">
+    <div className="h-auto md:w-[475px] bg-[#13192B] border border-indigo-500/25 rounded-2xl flex flex-col px-8 py-6 shadow-2xl text-slate-100">
+      <span className="text-white font-bold text-sm md:text-base mb-3">
         Choose a resume colour scheme
       </span>
       <div className="w-full">
@@ -23,8 +23,10 @@ export const ThemeSelect = () => {
           return (
             <div
               key={themeObject.id}
-              className={`flex border rounded mb-[16px] justify-between items-center py-[14px] px-4 ${
-                isActive ? 'bg-resume-50 border-resume-500' : 'border-[#a9a9a9]'
+              className={`flex border rounded-xl mb-[12px] justify-between items-center py-3 px-4 transition-colors ${
+                isActive
+                  ? 'bg-indigo-950/40 border-indigo-500 shadow-xs'
+                  : 'bg-[#161c30] border-slate-700/60 hover:border-indigo-500/40'
               } hover:cursor-pointer`}
               onClick={() => handleActiveTheme(themeObject)}
             >
