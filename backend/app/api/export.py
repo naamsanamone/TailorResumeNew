@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from typing import List
+import asyncio
 import logging
 
 from app.auth import get_current_user
@@ -40,13 +41,14 @@ async def export_pdf(
     # 1. Authentic LaTeX compilation (exact Jake Gutierrez resume)
     try:
         tex_code = generate_jake_latex(sections)
-        pdf_bytes = compile_latex_to_pdf(tex_code)
+        pdf_bytes = await asyncio.to_thread(compile_latex_to_pdf, tex_code)
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
             headers={"Content-Disposition": "attachment; filename=tailored_resume.pdf"},
         )
     except Exception as e:
+
         logger.warning(f"Direct LaTeX compilation failed ({e}), falling back to HTML renderer.")
 
     # 2. Fallback: HTML/xhtml2pdf renderer

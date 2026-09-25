@@ -39,10 +39,16 @@ class Settings(BaseSettings):
     
     @property
     def cors_origins_list(self) -> List[str]:
-        try:
-            return json.loads(self.CORS_ORIGINS)
-        except (json.JSONDecodeError, TypeError):
+        if not self.CORS_ORIGINS:
             return ["http://localhost:3000"]
+        try:
+            parsed = json.loads(self.CORS_ORIGINS)
+            if isinstance(parsed, list):
+                return [str(o).strip() for o in parsed if str(o).strip()]
+        except (json.JSONDecodeError, TypeError):
+            pass
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+
     
     @property
     def content_provider(self) -> str:

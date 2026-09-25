@@ -6,8 +6,8 @@ const BuilderPage: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>E-Resume: Builder</title>
-        <meta name="description" content="Single Page Resume Builder" />
+        <title>TailorResume — AI Resume Builder</title>
+        <meta name="description" content="AI-Powered ATS Resume Builder & Tailoring Engine" />
         <link rel="icon" type="image/png" href="/icons/resume-icon.png" />
       </Head>
 

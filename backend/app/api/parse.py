@@ -24,9 +24,10 @@ async def parse_resume(
     if ext not in ('pdf', 'docx'):
         raise HTTPException(status_code=400, detail="Only PDF and DOCX files are supported")
 
-    # Validate file size (max 10MB)
-    file_bytes = await file.read()
-    if len(file_bytes) > 10 * 1024 * 1024:
+    # Validate file size without loading unbounded data into memory (max 10MB)
+    MAX_FILE_SIZE = 10 * 1024 * 1024
+    file_bytes = await file.read(MAX_FILE_SIZE + 1)
+    if len(file_bytes) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File too large. Maximum size is 10MB.")
 
     # Validate magic bytes
@@ -40,8 +41,9 @@ async def parse_resume(
         logger.info(f"Parsed resume '{file.filename}' into {len(sections)} sections")
         return sections
     except Exception as e:
-        logger.error(f"Failed to parse resume: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to parse resume: {str(e)}")
+        logger.error(f"Failed to parse resume: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to parse resume. Please ensure the file is a valid PDF or DOCX document.")
+
 
 
 @router.post("/jd")

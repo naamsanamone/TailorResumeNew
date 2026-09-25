@@ -50,6 +50,7 @@ out/
 
 # Project Specific
 _ref/
+_backup_web/
 *.db
 test_resume.*
 alembic/versions/*.py
