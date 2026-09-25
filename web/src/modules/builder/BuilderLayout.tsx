@@ -1,13 +1,9 @@
 'use client';
 
 import EditorLayout from './editor/EditorLayout';
-import Image from '@/helpers/common/components/Image';
-import { useState } from 'react';
 import NavBarLayout from './nav-bar/NavBarLayout';
 import ResumeHeader from './resume/components/ResumeHeader';
 import { ResumeLayout } from './resume/ResumeLayout';
-import Tooltip from '@mui/material/Tooltip';
-
 import { useActiveSectionStore } from '@/stores/useActiveSectionStore';
 
 const segmentBtn =
@@ -79,19 +75,6 @@ const BuilderLayout = () => {
           <EditorLayout />
         </aside>
       </main>
-
-      <footer className="print:hidden">
-        <Tooltip title="Share feedback">
-          <a
-            href="https://forms.gle/YmpXEZLk6LYdnqet7"
-            target="_blank"
-            rel="noreferrer"
-            className="fixed w-14 h-14 rounded-full left-4 flex justify-center items-center bg-resume-50 shadow-level-4dp bottom-[max(1rem,env(safe-area-inset-bottom))]"
-          >
-            <Image src="/icons/rate-review.svg" alt="Feedback button" width="24" height="24" />
-          </a>
-        </Tooltip>
-      </footer>
     </div>
   );
 };
