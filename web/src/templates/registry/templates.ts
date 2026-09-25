@@ -333,36 +333,5 @@ export const TEMPLATE_REGISTRY: Record<string, TemplateRegistryEntry> = {
     ],
     loadComponent: () => import('@/templates/straightforward/StraightforwardTemplate'),
   },
-
-  resumave: {
-    id: 'resumave',
-    name: 'Resumave',
-    thumbnail: '/templates/plain.png',
-    sectionLayout: {
-      regionKeys: [REGION_IDS.main],
-      defaults: {
-        [REGION_IDS.main]: [
-          SECTION_IDS.summary,
-          SECTION_IDS.work,
-          SECTION_IDS.projects,
-          SECTION_IDS.education,
-          SECTION_IDS.skills,
-          SECTION_IDS.certifications,
-          SECTION_IDS.awards,
-          SECTION_IDS.volunteerExp,
-        ],
-      },
-    },
-    sectionRules: [
-      { sectionId: SECTION_IDS.summary, when: has.basicsSummary },
-      { sectionId: SECTION_IDS.work, when: has.work },
-      { sectionId: SECTION_IDS.projects, when: has.projects },
-      { sectionId: SECTION_IDS.education, when: has.education },
-      { sectionId: SECTION_IDS.skills, when: has.skillsLangFrameworks },
-      { sectionId: SECTION_IDS.certifications, when: has.certifications },
-      { sectionId: SECTION_IDS.awards, when: has.awards },
-      { sectionId: SECTION_IDS.volunteerExp, when: has.volunteer },
-    ],
-    loadComponent: () => import('@/templates/resumave/ResumaveTemplate'),
-  },
 };
+
