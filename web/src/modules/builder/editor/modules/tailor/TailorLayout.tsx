@@ -152,7 +152,9 @@ const TailorLayout = () => {
   const handleTailorSummary = useCallback(async () => {
     setTailoringSection('summary');
     try {
-      const res = await tailorSummary(sectionsRef.current as any, jd);
+      const currentSections = buildSections();
+      sectionsRef.current = currentSections;
+      const res = await tailorSummary(currentSections as any, jd);
       setTailoredSummary(res);
       setOverallScore(res.ats_score);
       setAnalysis((prev) => {
@@ -180,7 +182,9 @@ const TailorLayout = () => {
     async (index: number) => {
       setTailoringSection(`bullets-${index}`);
       try {
-        const res = await tailorBullets(sectionsRef.current as any, jd, index);
+        const currentSections = buildSections();
+        sectionsRef.current = currentSections;
+        const res = await tailorBullets(currentSections as any, jd, index);
         setTailoredBullets((prev) => ({ ...prev, [index]: res }));
         setOverallScore(res.ats_score);
         setAnalysis((prev) => {
@@ -222,7 +226,9 @@ const TailorLayout = () => {
   const handleTailorSkills = useCallback(async () => {
     setTailoringSection('skills');
     try {
-      const res = await tailorSkills(sectionsRef.current as any, jd);
+      const currentSections = buildSections();
+      sectionsRef.current = currentSections;
+      const res = await tailorSkills(currentSections as any, jd);
       setTailoredSkills(res);
       setOverallScore(res.ats_score);
       setAnalysis((prev) => {
@@ -248,10 +254,14 @@ const TailorLayout = () => {
 
   // ─── Step 3: Apply / Revert ───
   const applyAll = useCallback(async () => {
-    // 1. Apply summary
+    // 1. Apply summary (and clear obsolete objective so single Profile description renders cleanly)
     if (tailoredSummary) {
       const cur = useBasicDetails.getState().values;
-      useBasicDetails.getState().reset({ ...cur, summary: tailoredSummary.tailored_summary });
+      useBasicDetails.getState().reset({
+        ...cur,
+        summary: tailoredSummary.tailored_summary,
+        objective: '',
+      });
     }
 
     // 2. Apply headline
@@ -279,35 +289,35 @@ const TailorLayout = () => {
       if (cats['Languages']) {
         const items =
           typeof cats['Languages'] === 'string'
-            ? cats['Languages'].split(',').map((s: string) => ({ name: s.trim(), level: 0 }))
+            ? cats['Languages'].split(',').map((s: string) => s.trim()).filter(Boolean).map((name) => ({ name, level: 0 }))
             : [];
         if (items.length) useLanguages.getState().reset(items);
       }
       if (cats['Frameworks']) {
         const items =
           typeof cats['Frameworks'] === 'string'
-            ? cats['Frameworks'].split(',').map((s: string) => ({ name: s.trim(), level: 0 }))
+            ? cats['Frameworks'].split(',').map((s: string) => s.trim()).filter(Boolean).map((name) => ({ name, level: 0 }))
             : [];
         if (items.length) useFrameworks.getState().reset(items);
       }
       if (cats['Technologies']) {
         const items =
           typeof cats['Technologies'] === 'string'
-            ? cats['Technologies'].split(',').map((s: string) => ({ name: s.trim(), level: 0 }))
+            ? cats['Technologies'].split(',').map((s: string) => s.trim()).filter(Boolean).map((name) => ({ name, level: 0 }))
             : [];
         if (items.length) useTechnologies.getState().reset(items);
       }
       if (cats['Tools']) {
         const items =
           typeof cats['Tools'] === 'string'
-            ? cats['Tools'].split(',').map((s: string) => ({ name: s.trim(), level: 0 }))
+            ? cats['Tools'].split(',').map((s: string) => s.trim()).filter(Boolean).map((name) => ({ name, level: 0 }))
             : [];
         if (items.length) useTools.getState().reset(items);
       }
       if (cats['Databases']) {
         const items =
           typeof cats['Databases'] === 'string'
-            ? cats['Databases'].split(',').map((s: string) => ({ name: s.trim(), level: 0 }))
+            ? cats['Databases'].split(',').map((s: string) => s.trim()).filter(Boolean).map((name) => ({ name, level: 0 }))
             : [];
         if (items.length) useDatabases.getState().reset(items);
       }

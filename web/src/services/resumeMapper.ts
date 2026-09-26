@@ -79,12 +79,13 @@ export function zustandToSections(
     headline: basics.label || '',
   });
 
-  // Summary
-  if (basics.summary) {
+  // Summary (supports basics.summary or basics.objective)
+  const summaryText = basics.summary || basics.objective || '';
+  if (summaryText) {
     sections.push({
       name: 'Summary',
       type: 'summary',
-      text: basics.summary,
+      text: summaryText,
     });
   }
 
