@@ -103,24 +103,55 @@ async def calculate_ats_score(
 
 
 ACTION_VERBS = {
-    "architected", "engineered", "developed", "built", "implemented", "designed",
-    "created", "spearheaded", "optimized", "automated", "orchestrated", "streamlined",
-    "led", "managed", "deployed", "scaled", "integrated", "delivered", "executed",
-    "maintained", "resolved", "refactored", "migrated", "enhanced", "accelerated",
-    "leveraged", "conducted", "directed", "transformed", "established", "formulated",
-    "championed", "pioneered", "boosted", "produced", "authored", "facilitated"
+    # Technical & Engineering
+    "architect", "architected", "engineer", "engineered", "develop", "developed",
+    "build", "built", "implement", "implemented", "design", "designed",
+    "create", "created", "spearhead", "spearheaded", "optimize", "optimized",
+    "automate", "automated", "orchestrate", "orchestrated", "streamline", "streamlined",
+    "deploy", "deployed", "scale", "scaled", "integrate", "integrated",
+    "refactor", "refactored", "migrate", "migrated", "enhance", "enhanced",
+    "accelerate", "accelerated", "program", "programmed", "code", "coded",
+    "write", "wrote", "test", "tested", "debug", "debugged", "launch", "launched",
+    "configure", "configured", "provision", "provisioned", "instrument", "instrumented",
+    "diagnose", "diagnosed", "triage", "triaged", "modernize", "modernized",
+    "revamp", "revamped", "restructure", "restructured", "reorganize", "reorganized",
+    "standardize", "standardized", "consolidate", "consolidated", "simplify", "simplified",
+    # Leadership, Management & Coordination
+    "lead", "led", "manage", "managed", "direct", "directed", "guide", "guided",
+    "oversee", "oversaw", "supervise", "supervised", "coordinate", "coordinated",
+    "mentor", "mentored", "coach", "coached", "train", "trained", "drive", "drove",
+    "champion", "championed", "pioneer", "pioneered", "spearhead", "spearheaded",
+    "collaborate", "collaborated", "facilitate", "facilitated", "negotiate", "negotiated",
+    "present", "presented", "publish", "published", "author", "authored",
+    # Execution, Analysis & Operations
+    "execute", "executed", "deliver", "delivered", "maintain", "maintained",
+    "resolve", "resolved", "leverage", "leveraged", "conduct", "conducted",
+    "transform", "transformed", "establish", "established", "formulate", "formulated",
+    "produce", "produced", "boost", "boosted", "reduce", "reduced",
+    "increase", "increased", "improve", "improved", "save", "saved",
+    "generate", "generated", "achieve", "achieved", "expand", "expanded",
+    "grow", "grew", "maximize", "maximized", "minimize", "minimized",
+    "outperform", "outperformed", "yield", "yielded", "analyze", "analyzed",
+    "assess", "assessed", "monitor", "monitored", "audit", "audited",
+    "evaluate", "evaluated", "benchmark", "benchmarked", "devise", "devised",
+    "conceptualize", "conceptualized", "initiate", "initiated", "strengthen", "strengthened",
+    "upgrade", "upgraded", "support", "supported", "assist", "assisted",
+    "provide", "provided", "define", "defined", "suggest", "suggested",
+    "use", "used", "utilize", "utilized", "interact", "interacted",
+    "keep", "kept", "administer", "administered"
 }
 
 import re
 
 def _has_metric(text: str) -> bool:
-    """Check if text contains quantifiable metric: %, $, numbers with scale."""
-    return bool(re.search(r'\b\d+(?:\.\d+)?%?|\$\d+', text))
+    """Check if text contains quantifiable metric: %, $, numbers with scale, teams, units."""
+    return bool(re.search(r'(?:\b\d+(?:[,\.]\d+)?\s*(?:%|\+|x|k|m|b|million|billion|users?|clients?|customers?|teams?|engineers?|developers?|members?|hours?|days?|weeks?|months?|years?|ms|seconds?|minutes?|requests?|transactions?|queries?|endpoints?|microservices?|servers?|nodes?|clusters?)\b|\$[\d,]+(?:\.\d+)?(?:k|m|b)?|\b\d+[- ](?:person|member|team)\b|\b\d{2,}\b)', text, re.IGNORECASE))
 
 def _has_action_verb(text: str) -> bool:
-    """Check if text starts with a strong action verb."""
-    words = [w.lower().rstrip(',.:;') for w in text.strip().split()[:2]]
-    return any(w in ACTION_VERBS for w in words)
+    """Check if text starts with a strong action verb (handles bullet prefixes and adverbs)."""
+    clean = re.sub(r'^[-*•\d.)\s]+', '', text).strip()
+    words = [re.sub(r'[^a-zA-Z]', '', w).lower() for w in clean.split()[:3]]
+    return any(w in ACTION_VERBS for w in words if w)
 
 async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str, Any]) -> Dict[str, Any]:
     """Calculate an intuitive, meaningful score (0-100) for an individual section."""
@@ -147,7 +178,7 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
             if target_title in text:
                 title_pts = 35.0
             else:
-                title_words = [w for w in target_title.split() if len(w) > 3 and w not in ("entry", "level", "senior", "junior", "lead")]
+                title_words = [w for w in target_title.split() if len(w) > 3 and w not in ("entry", "level", "senior", "junior", "lead", "at", "the")]
                 matched_words = [w for w in title_words if w in text]
                 title_pts = (len(matched_words) / len(title_words) * 35.0) if title_words else 15.0
         else:
@@ -163,9 +194,9 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
 
         # 3. Completeness & Length (30 pts)
         word_count = len(text.split())
-        length_pts = 30.0 if 25 <= word_count <= 80 else (20.0 if word_count > 15 else 10.0)
+        length_pts = 30.0 if 25 <= word_count <= 85 else (20.0 if word_count > 15 else 10.0)
 
-        total_score = min(100.0, title_pts + skill_pts + length_pts)
+        total_score = max(35.0, min(100.0, title_pts + skill_pts + length_pts))
         missing = [s for s in core_skills if s not in matched][:5]
 
         rec = ""
@@ -194,25 +225,38 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
         for entry in entries:
             bullets = entry.get("bullets") or []
             if not bullets:
-                all_entry_scores.append({"score": 10.0, "matched": [], "missing": core_skills[:3]})
+                all_entry_scores.append({"title": entry.get("title", ""), "company": entry.get("company", ""), "score": 35.0, "matched": [], "missing": core_skills[:3]})
                 continue
 
             entry_text = " ".join(bullets).lower()
 
+            # 1. Structure & Quality (25 pts)
+            word_counts = [len(b.strip().split()) for b in bullets if b.strip()]
+            avg_words = sum(word_counts) / max(1, len(word_counts))
+            base_pts = 15.0
+            if len(bullets) >= 2: base_pts += 5.0
+            if 8 <= avg_words <= 40: base_pts += 5.0
+
+            # 2. Action verbs (25 pts)
             action_count = sum(1 for b in bullets if _has_action_verb(b))
-            action_pts = (action_count / len(bullets)) * 35.0
+            action_pts = (action_count / len(bullets)) * 25.0
 
+            # 3. Quantifiable metrics (25 pts) - 40%+ bullets gives full metric pts
             metric_count = sum(1 for b in bullets if _has_metric(b))
-            metric_pts = (metric_count / len(bullets)) * 35.0
+            metric_target = max(1, int(len(bullets) * 0.4 + 0.99))
+            metric_pts = min(25.0, (metric_count / metric_target) * 25.0)
 
+            # 4. Core skills alignment (25 pts)
             entry_matched = []
             for s in core_skills:
                 if skill_in_text(s, entry_text):
                     entry_matched.append(s)
                     overall_matched.add(s)
 
-            skill_pts = min(30.0, (len(entry_matched) / 2.0) * 30.0)
-            entry_score = min(100.0, action_pts + metric_pts + skill_pts)
+            skill_pts = min(25.0, (len(entry_matched) / 2.0) * 25.0)
+
+            raw_entry_score = base_pts + action_pts + metric_pts + skill_pts
+            entry_score = max(35.0, min(100.0, raw_entry_score))
             entry_missing = [s for s in core_skills if s not in entry_matched][:3]
 
             all_entry_scores.append({
@@ -226,7 +270,7 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
         avg_score = sum(e["score"] for e in all_entry_scores) / len(all_entry_scores)
         overall_missing = [s for s in core_skills if s not in overall_matched][:5]
 
-        rec = "Add quantifiable metrics (% and numbers) and JD keywords to your bullets." if avg_score < 70 else "Experience bullets demonstrate strong achievements."
+        rec = "Add quantifiable metrics (% and numbers) and JD keywords to your bullets." if avg_score < 75 else "Experience bullets demonstrate strong achievements."
 
         return {
             "score": round(avg_score, 1),

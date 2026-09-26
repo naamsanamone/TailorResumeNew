@@ -607,32 +607,16 @@ const TailorLayout = () => {
             </div>
           )}
 
-          {/* Recommendations & 95%+ Target */}
-          {overallScore >= 85 ? (
-            <div className="p-3 bg-gradient-to-r from-emerald-950/60 to-emerald-900/40 border border-emerald-500/30 rounded-xl mb-3">
-              <div className="text-xs font-bold text-emerald-300 mb-1 flex items-center gap-1">
-                🚀 How to reach 95%+ ATS Score
-              </div>
-              <ul className="text-xs text-emerald-200/90 space-y-1">
-                {analysis.missing_skills.length > 0 ? (
-                  <li>• Weave remaining keywords into your bullets: <strong>{analysis.missing_skills.slice(0, 3).join(', ')}</strong></li>
-                ) : (
-                  <li>• All keywords matched! Quantify more metrics (% or numbers) in older experience entries.</li>
-                )}
-                <li>• Re-tailor any entry below 80% using action verbs (Architected, Engineered) and quantifiable metrics.</li>
+          {/* Recommendations */}
+          {analysis.recommendations && analysis.recommendations.length > 0 && (
+            <div className="p-3 bg-indigo-950/50 border border-indigo-500/30 rounded-xl mb-3">
+              <div className="text-xs font-semibold text-indigo-300 mb-1">💡 Recommendations</div>
+              <ul className="text-xs text-indigo-200/90 space-y-0.5">
+                {analysis.recommendations.map((r, i) => (
+                  <li key={i}>• {r}</li>
+                ))}
               </ul>
             </div>
-          ) : (
-            analysis.recommendations.length > 0 && (
-              <div className="p-3 bg-indigo-950/50 border border-indigo-500/30 rounded-xl mb-3">
-                <div className="text-xs font-semibold text-indigo-300 mb-1">💡 Recommendations</div>
-                <ul className="text-xs text-indigo-200/90 space-y-0.5">
-                  {analysis.recommendations.map((r, i) => (
-                    <li key={i}>• {r}</li>
-                  ))}
-                </ul>
-              </div>
-            )
           )}
 
           {/* Apply / Revert */}
