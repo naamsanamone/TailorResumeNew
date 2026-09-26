@@ -14,9 +14,12 @@ export const Education = ({ education }: { education: IEducation[] }) => {
               <div className="flex justify-between font-normal text-xs">
                 <p>{item.institution}</p>
                 <p>
-                  {`${dateParser(item.startDate)} - ${
-                    item.isStudyingHere ? 'present' : dateParser(item.endDate)
-                  }`}
+                  {(() => {
+                    const s = dateParser(item.startDate);
+                    const e = item.isStudyingHere ? 'present' : dateParser(item.endDate);
+                    if (s && e) return `${s} - ${e}`;
+                    return s || e || '';
+                  })()}
                 </p>
               </div>
             </div>

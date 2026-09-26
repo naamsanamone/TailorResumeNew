@@ -1,5 +1,5 @@
 import { SectionValidator } from '@/helpers/common/components/ValidSectionRenderer';
-import { SectionHeading } from '@/templates/common/palette-ui';
+import { formatDateRange, SectionHeading } from '@/templates/common/palette-ui';
 import type { ResumePalette } from '@/templates/common/resumePalette';
 
 export function Education({ education, p }: { education: any[]; p: ResumePalette }) {
@@ -13,7 +13,10 @@ export function Education({ education, p }: { education: any[]; p: ResumePalette
               {e.studyType} — {e.area}
             </div>
             <div style={{ color: p.muted, fontSize: 10.5 }}>
-              {e.institution} · {e.startDate} – {e.endDate}
+              {e.institution}
+              {formatDateRange(e.startDate, e.endDate, e.isStudyingHere)
+                ? ` · ${formatDateRange(e.startDate, e.endDate, e.isStudyingHere)}`
+                : ''}
             </div>
           </div>
         ))}

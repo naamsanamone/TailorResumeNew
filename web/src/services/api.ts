@@ -95,6 +95,9 @@ export interface TailorSummaryResponse {
   before_score: number;
   after_score: number;
   ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
 }
 
 export interface TailorBulletsResponse {
@@ -103,6 +106,9 @@ export interface TailorBulletsResponse {
   before_score: number;
   after_score: number;
   ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
 }
 
 export interface TailorSkillsResponse {
@@ -111,6 +117,9 @@ export interface TailorSkillsResponse {
   before_score: number;
   after_score: number;
   ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
 }
 
 export interface TailorProjectsResponse {
@@ -119,6 +128,9 @@ export interface TailorProjectsResponse {
   before_score: number;
   after_score: number;
   ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
 }
 
 export interface TailorCertificationsResponse {
@@ -127,6 +139,9 @@ export interface TailorCertificationsResponse {
   before_score: number;
   after_score: number;
   ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
 }
 
 export interface TailorCustomSectionResponse {
@@ -204,11 +219,13 @@ export async function tailorResume(
 /** Tailor only the summary section */
 export async function tailorSummary(
   sections: ResumeSection[],
-  jobDescription: string
+  jobDescription: string,
+  jdAnalysis?: any
 ): Promise<TailorSummaryResponse> {
   return apiCall<TailorSummaryResponse>('/tailor/summary', {
     resume_content: sections,
     job_description: jobDescription,
+    jd_analysis: jdAnalysis,
   });
 }
 
@@ -216,45 +233,53 @@ export async function tailorSummary(
 export async function tailorBullets(
   sections: ResumeSection[],
   jobDescription: string,
-  entryIndex: number
+  entryIndex: number,
+  jdAnalysis?: any
 ): Promise<TailorBulletsResponse> {
   return apiCall<TailorBulletsResponse>('/tailor/bullets', {
     resume_content: sections,
     job_description: jobDescription,
     entry_index: entryIndex,
+    jd_analysis: jdAnalysis,
   });
 }
 
 /** Reorder and expand skills to match JD */
 export async function tailorSkills(
   sections: ResumeSection[],
-  jobDescription: string
+  jobDescription: string,
+  jdAnalysis?: any
 ): Promise<TailorSkillsResponse> {
   return apiCall<TailorSkillsResponse>('/tailor/skills', {
     resume_content: sections,
     job_description: jobDescription,
+    jd_analysis: jdAnalysis,
   });
 }
 
 /** Tailor projects matching JD */
 export async function tailorProjects(
   sections: ResumeSection[],
-  jobDescription: string
+  jobDescription: string,
+  jdAnalysis?: any
 ): Promise<TailorProjectsResponse> {
   return apiCall<TailorProjectsResponse>('/tailor/projects', {
     resume_content: sections,
     job_description: jobDescription,
+    jd_analysis: jdAnalysis,
   });
 }
 
 /** Optimize and suggest relevant certifications matching JD */
 export async function tailorCertifications(
   sections: ResumeSection[],
-  jobDescription: string
+  jobDescription: string,
+  jdAnalysis?: any
 ): Promise<TailorCertificationsResponse> {
   return apiCall<TailorCertificationsResponse>('/tailor/certifications', {
     resume_content: sections,
     job_description: jobDescription,
+    jd_analysis: jdAnalysis,
   });
 }
 
@@ -280,11 +305,13 @@ export async function tailorCustomSection(
 /** Score resume against JD without modifying */
 export async function scoreResume(
   sections: ResumeSection[],
-  jobDescription: string
+  jobDescription: string,
+  jdAnalysis?: any
 ): Promise<ScoreResponse> {
   return apiCall<ScoreResponse>('/score/', {
     resume_content: sections,
     job_description: jobDescription,
+    jd_analysis: jdAnalysis,
   });
 }
 

@@ -1,4 +1,5 @@
 import { SectionValidator } from '@/helpers/common/components/ValidSectionRenderer';
+import { formatDateRange } from '@/templates/common/palette-ui';
 import type { ResumePalette } from '@/templates/common/resumePalette';
 
 const serif = "'Georgia', serif";
@@ -20,11 +21,14 @@ export function Education({ education, p }: { education: any[]; p: ResumePalette
         >
           Education
         </h3>
-        {education.map((e: any) => (
-          <div key={e.id} style={{ fontSize: 10.5, marginBottom: 6 }}>
-            <strong>{e.studyType}</strong>, {e.area} — {e.institution} ({e.startDate}–{e.endDate})
-          </div>
-        ))}
+        {education.map((e: any) => {
+          const dateStr = formatDateRange(e.startDate, e.endDate, e.isStudyingHere);
+          return (
+            <div key={e.id} style={{ fontSize: 10.5, marginBottom: 6 }}>
+              <strong>{e.studyType}</strong>{e.area ? `, ${e.area}` : ''} — {e.institution}{dateStr ? ` (${dateStr})` : ''}
+            </div>
+          );
+        })}
       </section>
     </SectionValidator>
   );

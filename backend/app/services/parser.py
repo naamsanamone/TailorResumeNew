@@ -373,8 +373,14 @@ async def structure_resume_llm(raw_text: str) -> List[Dict[str, Any]]:
             system_message=system_message,
             temperature=0.1,
         )
-        sections = result.get("sections", [])
-        if sections:
+        if isinstance(result, list):
+            sections = result
+        elif isinstance(result, dict):
+            sections = result.get("sections") or result.get("result") or []
+        else:
+            sections = []
+
+        if sections and isinstance(sections, list):
             return sections
     except Exception as e:
         logger.warning(f"LLM parsing failed, using rule-based fallback: {e}")
