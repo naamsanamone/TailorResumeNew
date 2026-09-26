@@ -7,13 +7,13 @@ export default function AboutMe({
   profileImage,
 }: {
   summary: string;
-  profileImage: string;
+  profileImage?: string;
 }) {
   return (
     <div className="text-[1em]">
-      {profileImage.length !== 0 && (
+      {Boolean(profileImage && profileImage.trim()) && (
         <ProfileImage
-          src={profileImage}
+          src={profileImage!}
           width={'80px'}
           height={'80px'}
           imageWrapperClassname={`float-left mr-3 mb-1 ${styles.imageWrapShape}`}

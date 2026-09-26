@@ -13,6 +13,8 @@ import { useCustomSectionsStore } from '@/stores/customSections';
 
 import { Education } from './components/Education';
 import { Header } from './components/Header';
+import { Skills } from './components/Skills';
+import { Summary } from './components/Summary';
 import { Work } from './components/Work';
 
 export default function PlainTemplate() {
@@ -29,6 +31,19 @@ export default function PlainTemplate() {
     }
 
     switch (sectionId) {
+      case 'summary':
+        return <Summary summary={basics.summary || basics.objective} p={resumePalette} />;
+      case 'skills':
+        return (
+          <Skills
+            languages={data.skills.languages}
+            frameworks={data.skills.frameworks}
+            technologies={data.skills.technologies}
+            tools={data.skills.tools}
+            databases={data.skills.databases}
+            p={resumePalette}
+          />
+        );
       case 'work':
         return <Work work={data.work} p={resumePalette} />;
       case 'education':

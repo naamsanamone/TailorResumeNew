@@ -60,7 +60,7 @@ export default function StraightforwardTemplate() {
 
     switch (sectionId) {
       case SECTION_IDS.summary:
-        return <Summary summary={basics.summary} p={resumePalette} />;
+        return <Summary summary={basics.summary || basics.objective} p={resumePalette} />;
       case SECTION_IDS.work:
         return <Work work={data.work} p={resumePalette} />;
       case SECTION_IDS.involvements:

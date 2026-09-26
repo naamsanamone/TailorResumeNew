@@ -12,7 +12,7 @@ const About = ({
   return (
     <Fragment>
       <RichtextEditor
-        label="About me"
+        label="Profile Description (Summary)"
         value={basicTabs.summary}
         onChange={(htmlOutput) => {
           onChangeHandler(htmlOutput, 'summary');

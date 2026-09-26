@@ -25,10 +25,19 @@ export const AwardSection = ({ awardsReceived }: { awardsReceived: IAwards[] }) 
         return (
           <div key={index} className="pb-2">
             <SectionTitle label={award.title} />
-            <div className="flex justify-between awards-center">
-              <SectionSubtitle label={award.awarder} />
-              <div>
-                <p className="text-xs">{dateParser(award.date)}</p>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                gap: 8,
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <SectionSubtitle label={award.awarder} />
+              </div>
+              <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                <p className="text-xs" style={{ whiteSpace: 'nowrap' }}>{dateParser(award.date)}</p>
               </div>
             </div>
             <SectionList>

@@ -143,12 +143,22 @@ export function applyParsedSections(sections: ResumeSection[]): void {
       } as never);
     }
 
-    if (type === 'summary' && sec.text) {
+    const isProfileSummary =
+      type === 'summary' ||
+      type === 'profile' ||
+      type === 'objective' ||
+      type === 'about' ||
+      (sec.name && /summary|profile|objective|about/i.test(sec.name));
+
+    const anySec = sec as any;
+    const summaryContent = sec.text || anySec.content || anySec.summary || (Array.isArray(sec.items) ? sec.items.join(' ') : '');
+
+    if (isProfileSummary && summaryContent) {
       // Update summary on the basic details store
       const current = useBasicDetails.getState().values;
       useBasicDetails.getState().reset({
         ...current,
-        summary: sec.text,
+        summary: summaryContent,
       } as never);
     }
 

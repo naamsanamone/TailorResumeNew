@@ -23,12 +23,21 @@ export const WorkSection = ({ experience }: { experience: IWorkIntrf[] }) => {
 
       {experience.map((item: IWorkIntrf, index: number) => {
         return (
-          <div key={index} className="py-2">
+          <div key={index} className="py-1.5">
             <SectionTitle label={item.name} />
-            <div className="flex justify-between items-center">
-              <SectionSubtitle label={item.position} />
-              <div>
-                <p className="text-xs">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                gap: 8,
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <SectionSubtitle label={item.position} />
+              </div>
+              <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                <p className="text-xs" style={{ whiteSpace: 'nowrap' }}>
                   {dateParser(item.startDate)} -{' '}
                   {item.isWorkingHere ? 'present' : dateParser(item.endDate)}
                 </p>

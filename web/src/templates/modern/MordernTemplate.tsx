@@ -6,6 +6,7 @@ import { SkillsSection } from './components/Skills';
 import { SummarySection } from './components/Summary';
 import { WorkSection } from './components/Work';
 import { AwardSection } from './components/Awards';
+import { SectionHeading } from './atoms/SectionHeading';
 import { useContext } from 'react';
 import { StateContext } from '@/modules/builder/resume/ResumeLayout';
 import { SectionValidator } from '@/helpers/common/components/ValidSectionRenderer';
@@ -38,12 +39,14 @@ export default function MordernTemplate() {
     }
 
     switch (sectionId) {
-      case 'summary':
+      case 'summary': {
+        const summaryText = resumeData.basics.summary || resumeData.basics.objective;
         return (
-          <SectionValidator value={resumeData.basics.summary}>
-            <SummarySection summary={resumeData.basics.summary} />
+          <SectionValidator value={summaryText}>
+            <SummarySection summary={summaryText} />
           </SectionValidator>
         );
+      }
       case 'work':
         return (
           <SectionValidator value={resumeData.work}>
@@ -107,16 +110,16 @@ export default function MordernTemplate() {
         );
       case 'projects':
         return resumeData.activities?.involvements ? (
-          <div>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6, color: '#475569' }}>Projects</h3>
-            <div style={{ fontSize: '12px', lineHeight: 1.5 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.involvements }} />
+          <div style={{ marginBottom: 10 }}>
+            <SectionHeading title="Projects" />
+            <div style={{ fontSize: '12px', lineHeight: 1.45 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.involvements }} />
           </div>
         ) : null;
       case 'certifications':
         return resumeData.activities?.achievements ? (
-          <div>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6, color: '#475569' }}>Certifications</h3>
-            <div style={{ fontSize: '12px', lineHeight: 1.5 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.achievements }} />
+          <div style={{ marginBottom: 10 }}>
+            <SectionHeading title="Certifications" />
+            <div style={{ fontSize: '12px', lineHeight: 1.45 }} dangerouslySetInnerHTML={{ __html: resumeData.activities.achievements }} />
           </div>
         ) : null;
       default:
@@ -125,7 +128,15 @@ export default function MordernTemplate() {
   };
 
   return (
-    <div className="p-2">
+    <div
+      className="overflow-hidden print:overflow-visible"
+      style={{
+        width: '100%',
+        maxWidth: '210mm',
+        boxSizing: 'border-box',
+        padding: '24px 32px',
+      }}
+    >
       <BasicIntro
         name={resumeData.basics.name}
         label={resumeData.basics.label}
@@ -136,15 +147,44 @@ export default function MordernTemplate() {
         image={resumeData.basics.image}
         profiles={resumeData.basics.profiles}
       />
-      <div className="flex">
-        <SortableRegion regionId="left" items={regions.left} className="basis-[60%] p-3">
+      <div
+        className="resume-columns-flex print:overflow-visible"
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          boxSizing: 'border-box',
+          gap: 20,
+        }}
+      >
+        <SortableRegion
+          regionId="left"
+          items={regions.left}
+          style={{
+            flex: '0 0 calc(58% - 10px)',
+            width: 'calc(58% - 10px)',
+            maxWidth: 'calc(58% - 10px)',
+            minWidth: 0,
+            boxSizing: 'border-box',
+          }}
+        >
           {(id) => (
             <SortableTemplateSection key={id} id={id}>
               {renderSection(id)}
             </SortableTemplateSection>
           )}
         </SortableRegion>
-        <SortableRegion regionId="right" items={regions.right} className="basis-[40%] p-3">
+        <SortableRegion
+          regionId="right"
+          items={regions.right}
+          style={{
+            flex: '0 0 calc(42% - 10px)',
+            width: 'calc(42% - 10px)',
+            maxWidth: 'calc(42% - 10px)',
+            minWidth: 0,
+            boxSizing: 'border-box',
+          }}
+        >
           {(id) => (
             <SortableTemplateSection key={id} id={id}>
               {renderSection(id)}

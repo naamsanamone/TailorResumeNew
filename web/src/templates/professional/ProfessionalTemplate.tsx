@@ -79,6 +79,16 @@ export default function ProfessionalTemplate() {
     }
 
     switch (sectionId) {
+      case 'summary': {
+        const summaryText = resumeData.basics.summary || resumeData.basics.objective;
+        return (
+          <SectionValidator value={summaryText}>
+            <Section title="Profile">
+              <AboutMe summary={summaryText} profileImage={resumeData.basics.image} />
+            </Section>
+          </SectionValidator>
+        );
+      }
       case 'work':
         return (
           <SectionValidator value={resumeData.work}>
@@ -157,14 +167,16 @@ export default function ProfessionalTemplate() {
     }
 
     switch (sectionId) {
-      case 'summary':
+      case 'summary': {
+        const summaryText = resumeData.basics.summary || resumeData.basics.objective;
         return (
-          <SectionValidator value={resumeData.basics.summary}>
-            <Section title="Summary">
-              <AboutMe summary={resumeData.basics.summary} profileImage={resumeData.basics.image} />
+          <SectionValidator value={summaryText}>
+            <Section title="Profile">
+              <AboutMe summary={summaryText} profileImage={resumeData.basics.image} />
             </Section>
           </SectionValidator>
         );
+      }
       case 'objective':
         return (
           <SectionValidator value={resumeData.basics.objective}>

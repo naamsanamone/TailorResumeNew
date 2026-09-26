@@ -55,27 +55,50 @@ export const BasicIntro = ({
     !image.length;
   return (
     <div
-      className={`flex justify-between ${
-        isProfileLinkAvailable ? 'items-end' : 'items-center'
-      }  p-2`}
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: isProfileLinkAvailable ? 'flex-end' : 'center',
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: 16,
+        marginBottom: 10,
+      }}
     >
-      <div>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <ProfileName name={name} />
         <SectionSubtitle label={label} />
-        <div className="flex gap-3">
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '3px 12px',
+            alignItems: 'center',
+            marginTop: 4,
+          }}
+        >
           <ProfileContact text={phone} />
           <ProfileContact text={email} />
           <ProfileContact text={city} />
           {url && (
-            <div className="flex gap-2 ml-2 items-center">
-              <BsGlobe />
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <BsGlobe style={{ flexShrink: 0 }} />
               <ProfileContact text={url} />
             </div>
           )}
         </div>
       </div>
-      <ProfileImage src={image} height="100px" width="100px" />
-      {isProfileLinkAvailable && <SocialIcons profiles={profiles} />}
+      <div
+        style={{
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <ProfileImage src={image} height="90px" width="90px" />
+        {isProfileLinkAvailable && <SocialIcons profiles={profiles} />}
+      </div>
     </div>
   );
 };

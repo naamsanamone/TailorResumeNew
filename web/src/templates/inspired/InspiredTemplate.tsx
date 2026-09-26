@@ -56,7 +56,7 @@ export default function InspiredTemplate() {
 
     switch (sectionId) {
       case 'summary':
-        return <Summary summary={basics.summary} p={resumePalette} />;
+        return <Summary summary={basics.summary || basics.objective} p={resumePalette} />;
       case 'skills':
         return (
           <Skills items={data.skills.languages.concat(data.skills.frameworks)} p={resumePalette} />

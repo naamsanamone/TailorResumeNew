@@ -3,7 +3,7 @@ import { useBasicDetails } from '@/stores/basic';
 import BasicHeader from './components/BasicHeader';
 import BasicPanel from './components/BasicPanel';
 
-const tabTitles = ['Contacts', 'Links', 'About'];
+const tabTitles = ['Contacts', 'Links', 'Profile / About'];
 
 const BasicLayout = () => {
   const [activeTab, setActiveTab] = React.useState(0);

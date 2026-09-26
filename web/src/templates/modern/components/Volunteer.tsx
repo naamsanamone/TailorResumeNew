@@ -26,11 +26,20 @@ export const VolunteerSection = ({ volunteer }: { volunteer: IVolunteer[] }) => 
           <div key={index} className="py-2">
             <div>
               <SectionTitle label={`${item.organization}`} />
-              <div className="flex justify-between items-center">
-                <SectionSubtitle label={item.position} />
-                <div className="flex gap-3">
-                  <p className="text-xs">
-                    {dateParser(item.startDate)} -
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  gap: 8,
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <SectionSubtitle label={item.position} />
+                </div>
+                <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                  <p className="text-xs" style={{ whiteSpace: 'nowrap' }}>
+                    {dateParser(item.startDate)} -{' '}
                     {item.isVolunteeringNow ? 'present' : dateParser(item.endDate)}
                   </p>
                 </div>

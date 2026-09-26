@@ -6,7 +6,7 @@ export function Summary({ summary, p }: { summary: string; p: ResumePalette }) {
   return (
     <SectionValidator value={summary}>
       <section style={{ marginBottom: 14 }}>
-        <SectionHeading title="// profile" p={p} variant="bar" />
+        <SectionHeading title="Profile" p={p} variant="underline" />
         <RichText html={summary} p={p} />
       </section>
     </SectionValidator>

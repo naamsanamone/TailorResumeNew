@@ -33,7 +33,7 @@ export default function HeaderBandTemplate() {
 
     switch (sectionId) {
       case 'summary':
-        return <Summary summary={basics.summary} p={resumePalette} />;
+        return <Summary summary={basics.summary || basics.objective} p={resumePalette} />;
       case 'work':
         return <Work work={data.work} p={resumePalette} />;
       case 'projects':

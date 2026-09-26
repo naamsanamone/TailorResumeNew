@@ -1,7 +1,7 @@
 export const ProfileName = ({ name }: { name: string }) => {
   return (
     <h3
-      className="text-3xl font-medium max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap"
+      className="text-3xl font-medium max-w-full overflow-hidden text-ellipsis whitespace-nowrap m-0"
       title={name}
     >
       {name}

@@ -2,7 +2,7 @@
 const hasLen = (v: unknown) =>
   !!(v && (typeof v === 'string' ? v.length : (v as any[]).length));
 
-export const basicsSummary = (r: any) => hasLen(r.basics?.summary);
+export const basicsSummary = (r: any) => hasLen(r.basics?.summary) || hasLen(r.basics?.objective);
 export const basicsObjective = (r: any) => hasLen(r.basics?.objective);
 export const work = (r: any) => hasLen(r.work);
 export const awards = (r: any) => hasLen(r.activities?.achievementsHtml);
