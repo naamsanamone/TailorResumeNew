@@ -430,4 +430,56 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
             "recommendation": rec
         }
 
-    return {"score": 50.0, "matched": [], "missing": [], "recommendation": ""}
+    # Custom / List / Supplementary sections
+    sec_title = section.get("name") or section.get("title") or "Custom Section"
+    bullets = []
+    if isinstance(section.get("items"), list) and section["items"]:
+        bullets = [str(b).strip() for b in section["items"] if str(b).strip()]
+    elif isinstance(section.get("entries"), list) and section["entries"]:
+        for entry in section["entries"]:
+            if isinstance(entry, dict):
+                if entry.get("bullets"):
+                    bullets.extend([str(b).strip() for b in entry["bullets"] if str(b).strip()])
+                elif entry.get("description"):
+                    bullets.append(str(entry["description"]).strip())
+                elif entry.get("name") or entry.get("title"):
+                    bullets.append(str(entry.get("name") or entry.get("title")).strip())
+    elif isinstance(section.get("text"), str) and section["text"].strip():
+        bullets = [l.strip() for l in section["text"].split("\n") if l.strip()]
+
+    if not bullets:
+        return {
+            "score": 50.0,
+            "matched": [],
+            "missing": core_skills[:3],
+            "recommendation": f'Add detailed bullet points to "{sec_title}" demonstrating relevant contributions and impact.'
+        }
+
+    all_text = " ".join(bullets).lower()
+    matched = [s for s in core_skills if skill_in_text(s, all_text)]
+    keyword_pts = min(40.0, (len(matched) / 2.0) * 40.0)
+
+    action_count = sum(1 for b in bullets if _has_action_verb(b))
+    action_pts = (action_count / len(bullets)) * 20.0 if bullets else 10.0
+
+    metric_count = sum(1 for b in bullets if _has_metric(b))
+    metric_target = max(1, int(len(bullets) * 0.3 + 0.99))
+    metric_pts = min(20.0, (metric_count / metric_target) * 20.0)
+
+    word_counts = [len(b.split()) for b in bullets]
+    avg_words = sum(word_counts) / max(1, len(word_counts))
+    structure_pts = 10.0
+    if len(bullets) >= 2: structure_pts += 5.0
+    if 8 <= avg_words <= 40: structure_pts += 5.0
+
+    raw_score = keyword_pts + action_pts + metric_pts + structure_pts
+    total_score = max(45.0, min(100.0, raw_score))
+    missing = [s for s in core_skills if s not in matched][:3]
+    rec = f'Strong contributions and keyword alignment in "{sec_title}".' if total_score >= 80 else f'Incorporate target domain keywords and measurable impact into "{sec_title}".'
+
+    return {
+        "score": round(total_score, 1),
+        "matched": matched,
+        "missing": missing,
+        "recommendation": rec
+    }

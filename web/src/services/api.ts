@@ -8,6 +8,7 @@ const API_BASE = `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000')
 /* ─────────── Shared Types ─────────── */
 
 export interface ResumeSection {
+  id?: string;
   name: string;
   type: string;
   fullName?: string;
@@ -112,6 +113,35 @@ export interface TailorSkillsResponse {
   ats_score: number;
 }
 
+export interface TailorProjectsResponse {
+  tailored_projects: string[];
+  keywords_incorporated: string[];
+  before_score: number;
+  after_score: number;
+  ats_score: number;
+}
+
+export interface TailorCertificationsResponse {
+  tailored_certifications: string[];
+  keywords_incorporated: string[];
+  before_score: number;
+  after_score: number;
+  ats_score: number;
+}
+
+export interface TailorCustomSectionResponse {
+  section_id: string;
+  section_title: string;
+  tailored_bullets: string[];
+  keywords_incorporated: string[];
+  before_score: number;
+  after_score: number;
+  ats_score: number;
+  breakdown?: ScoreBreakdown;
+  matched_skills?: SkillMatch[];
+  missing_skills?: string[];
+}
+
 /* ─────────── Score ─────────── */
 
 export interface ScoreResponse {
@@ -203,6 +233,47 @@ export async function tailorSkills(
   return apiCall<TailorSkillsResponse>('/tailor/skills', {
     resume_content: sections,
     job_description: jobDescription,
+  });
+}
+
+/** Tailor projects matching JD */
+export async function tailorProjects(
+  sections: ResumeSection[],
+  jobDescription: string
+): Promise<TailorProjectsResponse> {
+  return apiCall<TailorProjectsResponse>('/tailor/projects', {
+    resume_content: sections,
+    job_description: jobDescription,
+  });
+}
+
+/** Optimize and suggest relevant certifications matching JD */
+export async function tailorCertifications(
+  sections: ResumeSection[],
+  jobDescription: string
+): Promise<TailorCertificationsResponse> {
+  return apiCall<TailorCertificationsResponse>('/tailor/certifications', {
+    resume_content: sections,
+    job_description: jobDescription,
+  });
+}
+
+/** Tailor an arbitrary or custom section matching JD */
+export async function tailorCustomSection(
+  sections: ResumeSection[],
+  jobDescription: string,
+  sectionId: string,
+  sectionTitle: string,
+  bullets?: string[],
+  jdAnalysis?: any
+): Promise<TailorCustomSectionResponse> {
+  return apiCall<TailorCustomSectionResponse>('/tailor/custom', {
+    resume_content: sections,
+    job_description: jobDescription,
+    section_id: sectionId,
+    section_title: sectionTitle,
+    bullets,
+    jd_analysis: jdAnalysis,
   });
 }
 

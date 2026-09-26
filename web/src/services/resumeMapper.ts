@@ -7,6 +7,7 @@ import type { IBasics, IWorkIntrf, IEducation, IAwards, IItem, IVolunteer } from
 /* ────────────── Backend Section Types ────────────── */
 
 interface ResumeSection {
+  id?: string;
   name: string;
   type: string;
   fullName?: string;
@@ -206,8 +207,9 @@ export function zustandToSections(
       if (cs.content && cs.content.trim()) {
         const bullets = extractBulletsFromHtml(cs.content);
         sections.push({
+          id: cs.id,
           name: cs.title,
-          type: 'list',
+          type: 'custom',
           items: bullets.length > 0 ? bullets : [cs.content.replace(/<[^>]+>/g, '').trim()],
         });
       }

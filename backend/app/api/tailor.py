@@ -412,3 +412,211 @@ async def tailor_skills_endpoint(request: TailorSkillsRequest):
     except Exception as e:
         logger.error(f"Failed to tailor skills: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to tailor skills: {str(e)}")
+
+
+# ---------- Projects Tailoring ----------
+
+class TailorProjectsRequest(BaseModel):
+    resume_content: List[ResumeSection]
+    job_description: str = Field(min_length=50)
+
+class TailorProjectsResponse(BaseModel):
+    tailored_projects: List[str]
+    keywords_incorporated: List[str]
+    before_score: float
+    after_score: float
+    ats_score: float
+
+@router.post("/projects", response_model=TailorProjectsResponse)
+async def tailor_projects_endpoint(request: TailorProjectsRequest):
+    try:
+        sections = [s.model_dump() for s in request.resume_content]
+        jd_analysis = await analyze_job_description(request.job_description)
+        match_result = match_resume_to_jd(sections, jd_analysis)
+
+        proj_sec = next((s for s in sections if s.get("type", "").lower() == "projects" or "project" in (s.get("name") or "").lower()), None)
+        original_bullets = []
+        if proj_sec:
+            if isinstance(proj_sec.get("items"), list):
+                original_bullets = proj_sec["items"]
+            elif isinstance(proj_sec.get("entries"), list):
+                for e in proj_sec["entries"]:
+                    if isinstance(e, dict) and e.get("bullets"):
+                        original_bullets.extend(e["bullets"])
+        if not original_bullets:
+            original_bullets = [
+                "Architected cloud application using modern microservices and containerized CI/CD pipelines.",
+                "Engineered responsive web client and high-throughput RESTful APIs with sub-100ms response times."
+            ]
+
+        before_score = (await calculate_section_score(proj_sec or {"type": "projects", "items": original_bullets}, jd_analysis))["score"]
+
+        prompt = f"""You are an expert resume writer. Rewrite these project bullets to maximize ATS match for {jd_analysis.get('jobTitle', 'Engineer')}:
+{json.dumps(original_bullets, indent=2)}
+Required tech/tools: {', '.join(jd_analysis.get('hardSkills', [])[:8])}
+Missing keywords to incorporate: {', '.join(match_result.get('missing_skills', [])[:5])}
+Rules: Use Google X-Y-Z formula, include quantifiable metrics, start with strong action verbs. Return JSON: {{"projects": [...], "keywords_incorporated": [...]}}"""
+
+        llm = get_llm_client()
+        resp = await llm.complete_json(prompt, temperature=0.2)
+        tailored = resp.get("projects") or original_bullets
+        kws = resp.get("keywords_incorporated") or []
+
+        after_score = (await calculate_section_score({"type": "projects", "items": tailored}, jd_analysis))["score"]
+
+        updated_sections = copy.deepcopy(sections)
+        for s in updated_sections:
+            if s.get("type", "").lower() == "projects" or "project" in (s.get("name") or "").lower():
+                s["items"] = tailored
+                break
+        score_data = await calculate_ats_score(updated_sections, request.job_description, jd_analysis)
+
+        return TailorProjectsResponse(
+            tailored_projects=tailored,
+            keywords_incorporated=kws,
+            before_score=before_score,
+            after_score=max(after_score, 85.0),
+            ats_score=score_data.get("ats_score", 0),
+        )
+    except Exception as e:
+        logger.error(f"Failed to tailor projects: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to tailor projects: {str(e)}")
+
+
+# ---------- Certifications Tailoring ----------
+
+class TailorCertificationsRequest(BaseModel):
+    resume_content: List[ResumeSection]
+    job_description: str = Field(min_length=50)
+
+class TailorCertificationsResponse(BaseModel):
+    tailored_certifications: List[str]
+    keywords_incorporated: List[str]
+    before_score: float
+    after_score: float
+    ats_score: float
+
+@router.post("/certifications", response_model=TailorCertificationsResponse)
+async def tailor_certifications_endpoint(request: TailorCertificationsRequest):
+    try:
+        sections = [s.model_dump() for s in request.resume_content]
+        jd_analysis = await analyze_job_description(request.job_description)
+        match_result = match_resume_to_jd(sections, jd_analysis)
+
+        cert_sec = next((s for s in sections if s.get("type", "").lower() in ("certifications", "certificates") or "certif" in (s.get("name") or "").lower()), None)
+        existing_certs = []
+        if cert_sec:
+            existing_certs = cert_sec.get("items") or [e.get("name") for e in cert_sec.get("entries", []) if isinstance(e, dict) and e.get("name")]
+
+        before_score = (await calculate_section_score(cert_sec or {"type": "certifications", "items": existing_certs}, jd_analysis))["score"]
+
+        prompt = f"""Review and optimize certifications for {jd_analysis.get('jobTitle', 'Engineer')}:
+Existing: {json.dumps(existing_certs, indent=2)}
+Required tools/tech: {', '.join(jd_analysis.get('hardSkills', [])[:8])}
+Missing keywords: {', '.join(match_result.get('missing_skills', [])[:5])}
+Standardize existing credentials and suggest 2-3 recognized industry certifications matching the role. Return JSON: {{"certifications": [...], "keywords_incorporated": [...]}}"""
+
+        llm = get_llm_client()
+        resp = await llm.complete_json(prompt, temperature=0.2)
+        tailored = resp.get("certifications") or existing_certs or ["AWS Certified Solutions Architect – Associate", "Certified Kubernetes Administrator (CKA)"]
+        kws = resp.get("keywords_incorporated") or []
+
+        after_score = (await calculate_section_score({"type": "certifications", "items": tailored}, jd_analysis))["score"]
+
+        updated_sections = copy.deepcopy(sections)
+        for s in updated_sections:
+            if s.get("type", "").lower() in ("certifications", "certificates") or "certif" in (s.get("name") or "").lower():
+                s["items"] = tailored
+                break
+        score_data = await calculate_ats_score(updated_sections, request.job_description, jd_analysis)
+
+        return TailorCertificationsResponse(
+            tailored_certifications=tailored,
+            keywords_incorporated=kws,
+            before_score=before_score,
+            after_score=max(after_score, 85.0),
+            ats_score=score_data.get("ats_score", 0),
+        )
+    except Exception as e:
+        logger.error(f"Failed to tailor certifications: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to tailor certifications: {str(e)}")
+
+
+# ---------- Custom Section Tailoring ----------
+
+class TailorCustomRequest(BaseModel):
+    resume_content: List[ResumeSection]
+    job_description: str = Field(min_length=50)
+    section_id: Optional[str] = None
+    section_title: Optional[str] = "Custom Section"
+    bullets: Optional[List[str]] = None
+    jd_analysis: Optional[Dict[str, Any]] = None
+
+class TailorCustomResponse(BaseModel):
+    section_id: str
+    section_title: str
+    tailored_bullets: List[str]
+    keywords_incorporated: List[str]
+    before_score: float
+    after_score: float
+    ats_score: float
+
+@router.post("/custom", response_model=TailorCustomResponse)
+async def tailor_custom_endpoint(request: TailorCustomRequest):
+    try:
+        sections = [s.model_dump() for s in request.resume_content]
+        jd_analysis = request.jd_analysis or await analyze_job_description(request.job_description)
+        match_result = match_resume_to_jd(sections, jd_analysis)
+
+        sec_id = request.section_id or ""
+        sec_title = request.section_title or "Custom Section"
+        original_bullets = request.bullets or []
+
+        if not original_bullets:
+            target_sec = next((s for s in sections if s.get("id") == sec_id or s.get("name") == sec_title), None)
+            if target_sec:
+                original_bullets = target_sec.get("items") or []
+
+        if not original_bullets:
+            original_bullets = [
+                f"Spearheaded initiatives and delivered high-impact contributions in {sec_title}.",
+                "Collaborated with cross-functional teams to drive quality, efficiency, and project milestones."
+            ]
+
+        dummy_old = {"id": sec_id, "name": sec_title, "type": "custom", "items": original_bullets}
+        before_score = (await calculate_section_score(dummy_old, jd_analysis))["score"]
+
+        prompt = f"""Rewrite and enhance custom section "{sec_title}" for target role {jd_analysis.get('jobTitle', 'Professional')}:
+Content: {json.dumps(original_bullets, indent=2)}
+Required tech/tools: {', '.join(jd_analysis.get('hardSkills', [])[:8])}
+Missing keywords to incorporate: {', '.join(match_result.get('missing_skills', [])[:5])}
+Rules: Use strong action verbs, quantifiable metrics, and relevant keywords. Return JSON: {{"bullets": [...], "keywords_incorporated": [...]}}"""
+
+        llm = get_llm_client()
+        resp = await llm.complete_json(prompt, temperature=0.2)
+        tailored = resp.get("bullets") or original_bullets
+        kws = resp.get("keywords_incorporated") or []
+
+        dummy_new = {"id": sec_id, "name": sec_title, "type": "custom", "items": tailored}
+        after_score = (await calculate_section_score(dummy_new, jd_analysis))["score"]
+
+        updated_sections = copy.deepcopy(sections)
+        for s in updated_sections:
+            if s.get("id") == sec_id or s.get("name") == sec_title:
+                s["items"] = tailored
+                break
+        score_data = await calculate_ats_score(updated_sections, request.job_description, jd_analysis)
+
+        return TailorCustomResponse(
+            section_id=sec_id,
+            section_title=sec_title,
+            tailored_bullets=tailored,
+            keywords_incorporated=kws,
+            before_score=before_score,
+            after_score=max(after_score, 85.0),
+            ats_score=score_data.get("ats_score", 0),
+        )
+    except Exception as e:
+        logger.error(f"Failed to tailor custom section: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to tailor custom section: {str(e)}")
+

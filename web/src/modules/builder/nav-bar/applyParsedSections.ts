@@ -18,6 +18,7 @@ import {
 import { useAwards } from '@/stores/awards';
 import { useVoluteeringStore } from '@/stores/volunteering';
 import { useActivity } from '@/stores/activity';
+import { useCustomSectionsStore } from '@/stores/customSections';
 import type { ResumeSection } from '@/services/api';
 import type { IItem } from '@/stores/index.interface';
 
@@ -69,6 +70,7 @@ function mapSkillCategories(categories?: Record<string, string>, items?: string[
 }
 
 export function applyParsedSections(sections: ResumeSection[]): void {
+  useCustomSectionsStore.getState().resetAll();
   let foundProjects = '';
   let foundCertifications = '';
   let foundAchievementsHtml = '';
@@ -261,6 +263,45 @@ export function applyParsedSections(sections: ResumeSection[]): void {
       } else if (sec.text) {
         const lines = sec.text.split('\n').filter((l: string) => l.trim().length > 0);
         foundAchievementsHtml = `<ul>${lines.map((l: string) => `<li>${l.replace(/^[•\-–·*▪►○\d+\.]\s*/, '').trim()}</li>`).join('')}</ul>`;
+      }
+    }
+
+    // Custom / Non-standard sections (Publications, Volunteer, Patents, Extracurriculars, etc.)
+    const isHandled =
+      type === 'header' ||
+      type === 'summary' ||
+      type === 'objective' ||
+      type === 'profile' ||
+      type === 'skills' ||
+      type === 'experience' ||
+      type === 'education' ||
+      type === 'projects' ||
+      isCertSec ||
+      isAchievementSec;
+
+    if (!isHandled && sec.name && sec.name.trim()) {
+      let bullets: string[] = [];
+      if (Array.isArray(sec.items) && sec.items.length > 0) {
+        bullets = sec.items.filter(Boolean);
+      } else if (Array.isArray(sec.entries) && sec.entries.length > 0) {
+        bullets = sec.entries.flatMap((entry: any) => {
+          if (Array.isArray(entry.bullets) && entry.bullets.length > 0) {
+            return entry.bullets.filter(Boolean);
+          }
+          return [entry.name || entry.title || entry.summary || entry.description].filter(Boolean);
+        });
+      } else if (sec.text) {
+        bullets = sec.text
+          .split('\n')
+          .map((l: string) => l.replace(/^[•\-–·*▪►○\d+\.]\s*/, '').trim())
+          .filter(Boolean);
+      }
+
+      if (bullets.length > 0) {
+        const html = `<ul>${bullets.map((b: string) => `<li>${b}</li>`).join('')}</ul>`;
+        useCustomSectionsStore.getState().addCustomSection(sec.name, html);
+      } else if (sec.text && sec.text.trim()) {
+        useCustomSectionsStore.getState().addCustomSection(sec.name, `<p>${sec.text.trim()}</p>`);
       }
     }
   }
