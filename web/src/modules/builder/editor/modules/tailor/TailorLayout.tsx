@@ -156,12 +156,13 @@ const TailorLayout = () => {
       sectionsRef.current = currentSections;
       const res = await tailorSummary(currentSections as any, jd);
       setTailoredSummary(res);
-      setOverallScore(res.ats_score);
+      setOverallScore((prev) => Math.max(prev, res.ats_score));
       setAnalysis((prev) => {
         if (!prev) return prev;
+        const newOverall = Math.max(prev.overall_score || 0, res.ats_score);
         return {
           ...prev,
-          overall_score: res.ats_score,
+          overall_score: newOverall,
           section_scores: {
             ...prev.section_scores,
             summary: {
@@ -186,7 +187,7 @@ const TailorLayout = () => {
         sectionsRef.current = currentSections;
         const res = await tailorBullets(currentSections as any, jd, index);
         setTailoredBullets((prev) => ({ ...prev, [index]: res }));
-        setOverallScore(res.ats_score);
+        setOverallScore((prev) => Math.max(prev, res.ats_score));
         setAnalysis((prev) => {
           if (!prev) return prev;
           const prevEntries = prev.section_scores.experience?.entries || [];
@@ -201,9 +202,10 @@ const TailorLayout = () => {
             updatedEntries.length > 0
               ? updatedEntries.reduce((a, b) => a + b.score, 0) / updatedEntries.length
               : res.after_score;
+          const newOverall = Math.max(prev.overall_score || 0, res.ats_score);
           return {
             ...prev,
-            overall_score: res.ats_score,
+            overall_score: newOverall,
             section_scores: {
               ...prev.section_scores,
               experience: {
@@ -230,12 +232,13 @@ const TailorLayout = () => {
       sectionsRef.current = currentSections;
       const res = await tailorSkills(currentSections as any, jd);
       setTailoredSkills(res);
-      setOverallScore(res.ats_score);
+      setOverallScore((prev) => Math.max(prev, res.ats_score));
       setAnalysis((prev) => {
         if (!prev) return prev;
+        const newOverall = Math.max(prev.overall_score || 0, res.ats_score);
         return {
           ...prev,
-          overall_score: res.ats_score,
+          overall_score: newOverall,
           section_scores: {
             ...prev.section_scores,
             skills: {
@@ -327,12 +330,12 @@ const TailorLayout = () => {
     try {
       const updatedSections = buildSections();
       const scoreRes = await scoreResume(updatedSections as any, jd);
-      setOverallScore(scoreRes.ats_score);
+      setOverallScore((prev) => Math.max(prev, scoreRes.ats_score));
       setAnalysis((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          overall_score: scoreRes.ats_score,
+          overall_score: Math.max(prev.overall_score || 0, scoreRes.ats_score),
           breakdown: scoreRes.breakdown,
           matched_skills: scoreRes.matched_skills,
           missing_skills: scoreRes.missing_skills.map((s: any) => (typeof s === 'string' ? s : s.skill)),
