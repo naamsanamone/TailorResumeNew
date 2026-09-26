@@ -156,14 +156,44 @@ export function zustandToSections(
     }
   }
 
-  // Certifications (from activities.achievements)
-  if (activities?.achievements) {
-    const certBullets = extractBulletsFromHtml(activities.achievements);
+  // Certifications (from activities.achievements or achievementsHtml)
+  const certContent = activities?.achievements || (activities as any)?.achievementsHtml || '';
+  if (certContent) {
+    const certBullets = extractBulletsFromHtml(certContent);
     if (certBullets.length > 0) {
       sections.push({
         name: 'Certifications',
-        type: 'list',
+        type: 'certifications',
         items: certBullets,
+      });
+    }
+  }
+
+  // Awards
+  if (awards && awards.length > 0) {
+    const validAwards = awards.filter(a => a.title || a.awarder);
+    if (validAwards.length > 0) {
+      sections.push({
+        name: 'Awards',
+        type: 'awards',
+        items: validAwards.map(a => [a.title, a.awarder, a.summary].filter(Boolean).join(' - ')),
+      });
+    }
+  }
+
+  // Volunteering
+  if (volunteer && volunteer.length > 0) {
+    const validVol = volunteer.filter(v => v.organization || v.position);
+    if (validVol.length > 0) {
+      sections.push({
+        name: 'Volunteering',
+        type: 'volunteering',
+        entries: validVol.map(v => ({
+          title: v.position,
+          company: v.organization,
+          duration: [v.startDate, v.endDate].filter(Boolean).join(' – '),
+          bullets: extractBulletsFromHtml(v.summary || ''),
+        })),
       });
     }
   }

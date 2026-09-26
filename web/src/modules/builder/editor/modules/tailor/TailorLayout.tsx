@@ -610,6 +610,63 @@ const TailorLayout = () => {
             </div>
           )}
 
+          {/* Projects Section */}
+          {analysis.section_scores.projects && (
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold text-slate-100">💻 Projects</span>
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: scoreColor(analysis.section_scores.projects.score) }}
+                >
+                  {Math.round(analysis.section_scores.projects.score)}%
+                </span>
+              </div>
+              <ScoreBar score={analysis.section_scores.projects.score} small />
+              {analysis.section_scores.projects.recommendation && (
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.projects.recommendation}</p>
+              )}
+            </div>
+          )}
+
+          {/* Certifications Section */}
+          {analysis.section_scores.certifications && (
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold text-slate-100">📜 Certifications</span>
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: scoreColor(analysis.section_scores.certifications.score) }}
+                >
+                  {Math.round(analysis.section_scores.certifications.score)}%
+                </span>
+              </div>
+              <ScoreBar score={analysis.section_scores.certifications.score} small />
+              {analysis.section_scores.certifications.recommendation && (
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.certifications.recommendation}</p>
+              )}
+            </div>
+          )}
+
+          {/* Education Section */}
+          {analysis.section_scores.education && (
+            <div className="p-3.5 bg-[#161c30] border border-indigo-500/25 rounded-xl mb-3 shadow-sm">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-semibold text-slate-100">🎓 Education</span>
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: scoreColor(analysis.section_scores.education.score) }}
+                >
+                  {Math.round(analysis.section_scores.education.score)}%
+                </span>
+              </div>
+              <ScoreBar score={analysis.section_scores.education.score} small />
+              {analysis.section_scores.education.recommendation && (
+                <p className="text-xs text-slate-400 mb-2">{analysis.section_scores.education.recommendation}</p>
+              )}
+            </div>
+          )}
+
           {/* Recommendations */}
           {analysis.recommendations && analysis.recommendations.length > 0 && (
             <div className="p-3 bg-indigo-950/50 border border-indigo-500/30 rounded-xl mb-3">

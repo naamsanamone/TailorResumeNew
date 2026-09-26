@@ -66,6 +66,10 @@ export interface AnalyzeResponse {
     summary?: SectionScore;
     experience?: ExperienceSectionScore;
     skills?: SectionScore;
+    projects?: SectionScore;
+    certifications?: SectionScore;
+    education?: SectionScore;
+    [key: string]: any;
   };
   matched_skills: SkillMatch[];
   partial_matches: SkillMatch[];
@@ -117,6 +121,15 @@ export interface ScoreResponse {
   partial_matches: SkillMatch[];
   missing_skills: string[];
   recommendations: string[];
+  section_scores?: {
+    summary?: SectionScore;
+    experience?: ExperienceSectionScore;
+    skills?: SectionScore;
+    projects?: SectionScore;
+    certifications?: SectionScore;
+    education?: SectionScore;
+    [key: string]: any;
+  };
 }
 
 /* ─────────── API Call Helper ─────────── */

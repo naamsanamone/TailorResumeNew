@@ -45,7 +45,9 @@ async def calculate_ats_score(
             missing_sections.append(sec)
             
     # Remaining 20 pts: Summary OR Projects OR Certifications (standard ATS alternatives)
-    has_supplementary = any(t in section_types for t in ("summary", "projects", "list", "custom"))
+    has_supplementary = any(t in section_types for t in ("summary", "projects", "certifications", "list", "custom", "awards")) or any(
+        "project" in (s.get("name") or "").lower() or "certif" in (s.get("name") or "").lower() for s in resume_sections
+    )
     if not has_supplementary:
         completeness_score -= 20.0
         missing_sections.append("summary or projects")
@@ -312,6 +314,119 @@ async def calculate_section_score(section: Dict[str, Any], jd_analysis: Dict[str
             "score": round(score, 1),
             "matched": matched,
             "missing": missing,
+            "recommendation": rec
+        }
+
+    elif sec_type == "projects" or "project" in (section.get("name") or "").lower():
+        bullets = []
+        if isinstance(section.get("items"), list) and section["items"]:
+            bullets = [str(x) for x in section["items"] if x]
+        elif isinstance(section.get("entries"), list) and section["entries"]:
+            for entry in section["entries"]:
+                if isinstance(entry.get("bullets"), list):
+                    bullets.extend([str(b) for b in entry["bullets"] if b])
+                elif entry.get("description"):
+                    bullets.append(str(entry["description"]))
+                elif entry.get("summary"):
+                    bullets.append(str(entry["summary"]))
+                elif entry.get("title") or entry.get("name"):
+                    bullets.append(str(entry.get("title") or entry.get("name")))
+        elif section.get("text"):
+            bullets = [str(section["text"]).strip()]
+
+        if not bullets:
+            return {"score": 0.0, "matched": [], "missing": core_skills[:4], "recommendation": "Add technical projects highlighting relevant domain tools and quantifiable achievements."}
+
+        all_project_text = " ".join(bullets).lower()
+        matched = [s for s in core_skills if skill_in_text(s, all_project_text)]
+        skill_pts = min(35.0, (len(matched) / 2.5) * 35.0)
+
+        action_count = sum(1 for b in bullets if _has_action_verb(b))
+        action_pts = (action_count / len(bullets)) * 20.0 if bullets else 0.0
+
+        metric_count = sum(1 for b in bullets if _has_metric(b))
+        metric_target = max(1, int(len(bullets) * 0.3 + 0.99))
+        metric_pts = min(15.0, (metric_count / metric_target) * 15.0)
+
+        word_counts = [len(b.strip().split()) for b in bullets if b.strip()]
+        avg_words = sum(word_counts) / max(1, len(word_counts))
+        structure_pts = 15.0
+        if len(bullets) >= 2: structure_pts += 8.0
+        if 10 <= avg_words <= 45: structure_pts += 7.0
+
+        raw_score = skill_pts + action_pts + metric_pts + structure_pts
+        total_score = max(35.0, min(100.0, raw_score))
+        missing = [s for s in core_skills if s not in matched][:5]
+
+        rec = f"Integrate key target tech stack into projects: {', '.join(missing[:3])}" if skill_pts < 20 else ("Add quantifiable project outcomes (e.g. latency reduced by 40%, 10K+ active users)." if metric_pts < 10 else "Project bullets showcase strong technical execution and outcomes.")
+
+        return {
+            "score": round(total_score, 1),
+            "matched": matched,
+            "missing": missing,
+            "recommendation": rec
+        }
+
+    elif sec_type in ("certifications", "certificates") or "certif" in (section.get("name") or "").lower():
+        cert_list = []
+        if isinstance(section.get("items"), list):
+            cert_list = [str(x) for x in section["items"] if x]
+        elif isinstance(section.get("entries"), list):
+            cert_list = [str(e.get("name") or e.get("title") or e) for e in section["entries"] if e]
+        elif section.get("text"):
+            cert_list = [str(section["text"]).strip()]
+
+        if not cert_list:
+            return {"score": 0.0, "matched": [], "missing": ["Relevant cloud/industry certification (e.g. AWS, CKA, PMP)"], "recommendation": "Add industry certifications or credentials relevant to target requirements."}
+
+        joined_text = " ".join(cert_list).lower()
+        matched = [s for s in core_skills if skill_in_text(s, joined_text)]
+        known_kws = ["aws", "amazon", "azure", "gcp", "google cloud", "kubernetes", "cka", "ckad", "terraform", "docker", "cissp", "ceh", "comptia", "security+", "pmp", "scrum", "agile", "csm", "oracle", "certified", "architect", "developer", "administrator", "associate", "professional"]
+        for kw in known_kws:
+            if kw in joined_text and kw not in matched:
+                matched.append(kw)
+
+        cred_pts = min(40.0, (len(matched) / 2.0) * 40.0)
+        has_formal = bool(re.search(r'\b(?:certified|architect|professional|specialist|associate|administrator|engineer|pmp|csm|ccna)\b', joined_text, re.I))
+        issuer_pts = 30.0 if has_formal else 18.0
+        quantity_pts = 30.0 if len(cert_list) >= 2 else 20.0
+
+        raw_score = cred_pts + issuer_pts + quantity_pts
+        total_score = max(40.0, min(100.0, raw_score))
+        missing = [s for s in core_skills if s not in matched][:3]
+        rec = "Certifications validate core domain expertise." if total_score >= 80 else "Highlight recognized cloud or domain certifications (e.g., AWS, Azure, GCP, CKA)."
+
+        return {
+            "score": round(total_score, 1),
+            "matched": matched,
+            "missing": missing,
+            "recommendation": rec
+        }
+
+    elif sec_type in ("education", "academic") or "education" in (section.get("name") or "").lower():
+        entries = section.get("entries") or []
+        text = (section.get("text") or "").lower()
+        if not entries and not text:
+            return {"score": 0.0, "matched": [], "missing": ["Degree (e.g. B.S. in Computer Science)"], "recommendation": "Add your degree, university, and graduation year."}
+
+        all_edu = " ".join([f"{e.get('degree','')} {e.get('institution','')} {e.get('year','')}" for e in entries]) + " " + text
+        has_degree = bool(re.search(r'\b(?:bachelor|master|phd|b\.?s|m\.?s|b\.?tech|m\.?tech|associate|doctorate|degree|b\.?a)\b', all_edu, re.I))
+        has_tech_major = bool(re.search(r'\b(?:computer|software|engineering|information|data|science|electrical|mathematics|tech)\b', all_edu, re.I))
+
+        degree_pts = 40.0 if (has_degree and has_tech_major) else (30.0 if has_degree else 20.0)
+        has_inst = bool(entries and any(e.get("institution") for e in entries)) or bool(re.search(r'\b(?:university|college|institute|school|academy)\b', all_edu, re.I))
+        has_time = bool(entries and any(e.get("year") for e in entries)) or bool(re.search(r'\b(?:19|20)\d{2}\b', all_edu))
+        inst_pts = 35.0 if (has_inst and has_time) else (25.0 if (has_inst or has_time) else 15.0)
+        has_details = bool(re.search(r'\b(?:gpa|honor|cum laude|dean|coursework|scholar|magna|summa)\b', all_edu, re.I)) or bool(entries and any(e.get("gpa") for e in entries))
+        detail_pts = 25.0 if has_details else 20.0
+
+        total_score = max(40.0, min(100.0, degree_pts + inst_pts + detail_pts))
+        rec = "Education credentials meet standard ATS role criteria." if total_score >= 80 else "Include degree title, field of study, institution name, and graduation year."
+
+        return {
+            "score": round(total_score, 1),
+            "matched": ["STEM / Relevant Degree"] if has_tech_major else [],
+            "missing": [] if has_tech_major else ["Relevant Field of Study"],
             "recommendation": rec
         }
 
